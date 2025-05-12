@@ -1,20 +1,36 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EscuelaController;
+use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\AlumnoController;
+use App\Http\Controllers\TutelarController;
+use App\Http\Controllers\CatedraticoController;
+use App\Http\Controllers\GradoController;
+use App\Http\Controllers\HorarioClaseController;
+use App\Http\Controllers\CalendarioExamenController;
+use App\Http\Controllers\SeccionController;
+use App\Http\Controllers\CursoController;
+use App\Http\Controllers\ProgramaCursoController;
+use App\Http\Controllers\ActividadClaseController;
+use App\Http\Controllers\AsignacionController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::view('/', 'principal');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
-require __DIR__.'/auth.php';
+Route::resources([
+    'escuelas' => EscuelaController::class,
+    'inscripciones' => InscripcionController::class,
+    'alumnos' => AlumnoController::class,
+    'tutelares' => TutelarController::class,
+    'catedraticos' => CatedraticoController::class,
+    'grados' => GradoController::class,
+    'horarios' => HorarioClaseController::class,
+    'calendarios' => CalendarioExamenController::class,
+    'secciones' => SeccionController::class,
+    'cursos' => CursoController::class,
+    'programas' => ProgramaCursoController::class,
+    'actividades' => ActividadClaseController::class,
+    'asignaciones' => AsignacionController::class,
+]);

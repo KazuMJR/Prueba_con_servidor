@@ -15,9 +15,7 @@ use App\Http\Controllers\ProgramaCursoController;
 use App\Http\Controllers\ActividadClaseController;
 use App\Http\Controllers\AsignacionController;
 
-
 Route::view('/', 'principal');
-
 
 Route::resources([
     'escuelas' => EscuelaController::class,
@@ -28,9 +26,13 @@ Route::resources([
     'grados' => GradoController::class,
     'horarios' => HorarioClaseController::class,
     'calendarios' => CalendarioExamenController::class,
-    'secciones' => SeccionController::class,
     'cursos' => CursoController::class,
     'programas' => ProgramaCursoController::class,
     'actividades' => ActividadClaseController::class,
     'asignaciones' => AsignacionController::class,
+]);
+
+// Corrige la ruta de 'secciones' con el nombre correcto del parámetro
+Route::resource('secciones', SeccionController::class)->parameters([
+    'secciones' => 'seccion',
 ]);

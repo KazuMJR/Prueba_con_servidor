@@ -1,2 +1,2 @@
-<!-- resources/views/escuelas/create.blade.php -->
+<!-- se llama al formulario -->
 @include('escuelas.form')

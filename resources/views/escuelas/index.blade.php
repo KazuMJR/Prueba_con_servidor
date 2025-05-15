@@ -44,6 +44,10 @@
                             <td>
                                 <a href="{{ route('escuelas.show', $escuela) }}" class="btn-view">Ver</a>
                                 <a href="{{ route('escuelas.edit', $escuela) }}" class="btn-edit">Editar</a>
+                                <form action="{{ route('escuelas.destroy', $escuela) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar esta escuela?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-delete">Eliminar</button>
                             </td>
                         </tr>
                     @endforeach

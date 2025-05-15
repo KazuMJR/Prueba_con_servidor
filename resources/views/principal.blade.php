@@ -5,23 +5,32 @@
     <title>Panel Principal - MINEDUC</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ asset('styles/principal.css') }}">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="container">
-        <h1>Panel Principal - MINEDUC</h1>
-        <div class="row">
-            @foreach([ 'escuelas', 'alumnos', 'catedraticos', 'grados', 'secciones', 'cursos', 'programas', 'inscripciones', 'tutelares', 'horarios', 'calendarios', 'asignaciones', 'actividades' ] as $entidad)
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ str_replace('_', ' ', ucfirst($entidad)) }}</h5>
-                        <a href="{{ route($entidad . '.index') }}" class="btn-primary">Ver</a>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
+<header class="navbar">
+    <div class="logo">MINEDUC</div>
+    <nav class="nav-links">
+        @foreach([ 'escuelas', 'alumnos', 'catedraticos', 'grados', 'secciones', 'cursos', 'programas', 'inscripciones', 'tutelares', 'horarios', 'calendarios', 'asignaciones', 'actividades' ] as $entidad)
+            <a href="{{ route($entidad . '.index') }}">{{ ucfirst($entidad) }}</a>
+        @endforeach
+    </nav>
+</header>
+
+<main class="container">
+    <h1 class="page-title">Panel Principal - MINEDUC</h1>
+    <section class="card-grid">
+        @foreach([ 'escuelas', 'alumnos', 'catedraticos', 'grados', 'secciones', 'cursos', 'programas', 'inscripciones', 'tutelares', 'horarios', 'calendarios', 'asignaciones', 'actividades' ] as $entidad)
+            <div class="card">
+                <h2>{{ ucfirst($entidad) }}</h2>
+                <p>Gestión y visualización de {{ $entidad }}.</p>
+                <a href="{{ route($entidad . '.index') }}" class="btn">Ver Módulo</a>
+            </div>
+        @endforeach
+    </section>
+</main>
 
 </body>
 </html>

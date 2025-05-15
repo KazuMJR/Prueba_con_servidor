@@ -2,63 +2,60 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Catedratico;
 use Illuminate\Http\Request;
 
 class CatedraticoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $catedraticos = Catedratico::all();
+        return view('catedraticos.index', compact('catedraticos'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('catedraticos.form');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'cui' => 'required|unique:catedratico',
+            'nombre_catedratico' => 'required',
+            'edad' => 'required|integer',
+            'sexo' => 'required|in:M,F'
+        ]);
+
+        Catedratico::create($request->all());
+        return redirect()->route('catedraticos.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Catedratico $catedratico)
     {
-        //
+        return view('catedraticos.show', compact('catedratico'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Catedratico $catedratico)
     {
-        //
+        return view('catedraticos.form', compact('catedratico'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Catedratico $catedratico)
     {
-        //
+        $request->validate([
+            'nombre_catedratico' => 'required',
+            'edad' => 'required|integer',
+            'sexo' => 'required|in:M,F'
+        ]);
+
+        $catedratico->update($request->all());
+        return redirect()->route('catedraticos.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Catedratico $catedratico)
     {
-        //
+        $catedratico->delete();
+        return redirect()->route('catedraticos.index');
     }
 }

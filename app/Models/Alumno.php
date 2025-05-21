@@ -9,9 +9,13 @@ class Alumno extends Model
 {
     use HasFactory;
 
+    // Si tu tabla en BD se llama 'alumno' (singular)
     protected $table = 'alumno';
+
+    // Clave primaria
     protected $primaryKey = 'cui';
-    public $incrementing = false;
+    public $incrementing = false;   // porque 'cui' no es auto-incremental
+    protected $keyType = 'string';  // porque 'cui' es string
     public $timestamps = false;
 
     protected $fillable = [
@@ -19,13 +23,11 @@ class Alumno extends Model
         'nombre_alumno',
         'edad',
         'sexo',
-
     ];
 
-    // Relación con Inscripción
-    public function inscripcion()
+    // Un alumno puede tener muchas inscripciones
+    public function inscripciones()
     {
-        return $this->belongsTo(Inscripcion::class, 'inscripcion_codigo', 'codigo');
+        return $this->hasMany(Inscripcion::class, 'cui_alumno', 'cui');
     }
 }
-

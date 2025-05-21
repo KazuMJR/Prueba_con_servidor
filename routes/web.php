@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth; // Importar Auth para logout
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\EscuelaController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\AlumnoController;
@@ -15,14 +15,15 @@ use App\Http\Controllers\CursoController;
 use App\Http\Controllers\ProgramaCursoController;
 use App\Http\Controllers\ActividadClaseController;
 use App\Http\Controllers\AsignacionController;
-use App\Http\Controllers\ProfileController; // Importa el controlador ProfileController
+use App\Http\Controllers\ProfileController;
 
-// Ruta dashboard agregada para evitar error "Route [dashboard] not defined."
+// Ruta dashboard para evitar error "Route [dashboard] not defined."
 Route::get('/dashboard', function () {
-    return redirect()->route('horario_clase.index'); // Cambia a la ruta que prefieras
+    return redirect()->route('horario_clase.index'); // Cambia según tu preferencia
 })->name('dashboard');
 
-Route::view('/', 'principal');
+// Ruta principal modificada para cargar estadística de alumnos por edad desde AlumnoController@panelPrincipal
+Route::get('/', [AlumnoController::class, 'panelPrincipal'])->name('principal');
 
 // Recursos con resource simple (en plural y consistentes)
 Route::resources([
@@ -30,7 +31,7 @@ Route::resources([
     'alumnos' => AlumnoController::class,
     'catedraticos' => CatedraticoController::class,
     'grados' => GradoController::class,
-    'horario_clase' => HorarioClaseController::class, // corregido aquí
+    'horario_clase' => HorarioClaseController::class,
     'calendarios' => CalendarioExamenController::class,
     'cursos' => CursoController::class,
     'programas' => ProgramaCursoController::class,

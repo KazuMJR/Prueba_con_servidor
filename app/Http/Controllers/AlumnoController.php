@@ -23,11 +23,10 @@ class AlumnoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'cui' => 'required|string|max:15|unique:alumno,cui',
+            'cui' => 'required|string|max:15|unique:alumno,cui',  // tabla 'alumno' singular
             'nombre_alumno' => 'required|string|max:60',
             'edad' => 'required|integer|min:1',
             'sexo' => 'required|string|in:M,F',
-
         ]);
 
         Alumno::create($request->all());
@@ -49,11 +48,11 @@ class AlumnoController extends Controller
     public function update(Request $request, Alumno $alumno)
     {
         $request->validate([
+            // Aquí la clave primaria es 'cui', por eso la regla unique usa 'cui' como campo de exclusión
             'cui' => 'required|string|max:15|unique:alumno,cui,' . $alumno->cui . ',cui',
             'nombre_alumno' => 'required|string|max:60',
             'edad' => 'required|integer|min:1',
             'sexo' => 'required|string|in:M,F',
-
         ]);
 
         $alumno->update($request->all());
@@ -65,5 +64,29 @@ class AlumnoController extends Controller
     {
         $alumno->delete();
         return redirect()->route('alumnos.index')->with('success', 'Alumno eliminado correctamente.');
+    }
+
+    // Método para mostrar estadística por edad (usado en la vista principal)
+    public function panelPrincipal()
+    {
+        $estadisticasEdades = Alumno::select('edad')
+            ->get()
+            ->groupBy('edad')
+            ->map(fn($group) => $group->count())
+            ->sortKeys();
+
+        return view('principal', compact('estadisticasEdades'));
+    }
+
+    // Función para estadística específica de alumnos por edad (opcional)
+    public function estadisticaPorEdad()
+    {
+        $estadisticasEdades = Alumno::select('edad')
+            ->get()
+            ->groupBy('edad')
+            ->map(fn($group) => $group->count())
+            ->sortKeys();
+
+        return view('alumnos.estadistica', compact('estadisticasEdades'));
     }
 }

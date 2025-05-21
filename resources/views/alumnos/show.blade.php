@@ -16,7 +16,7 @@
             <p><strong>Nombre:</strong> {{ $alumno->nombre_alumno }}</p>
             <p><strong>Edad:</strong> {{ $alumno->edad }}</p>
             <p><strong>Sexo:</strong> {{ $alumno->sexo }}</p>
-            <p><strong>Inscripción Código:</strong> {{ $alumno->inscripcion_codigo }}</p>
+            
         </div>
 
         <div class="actions">

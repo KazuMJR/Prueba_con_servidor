@@ -25,9 +25,7 @@ return new class extends Migration {
             $table->string('nombre_alumno', 60);
             $table->integer('edad');
             $table->string('sexo', 1);
-            $table->string('inscripcion_codigo', 15);
-            $table->foreign('inscripcion_codigo')->references('codigo')->on('inscripcion')->onDelete('cascade');
-        });
+           });
 
         Schema::create('catedratico', function (Blueprint $table) {
             $table->string('cui', 15)->primary();
@@ -66,13 +64,17 @@ return new class extends Migration {
         });
 
         Schema::create('tutelares', function (Blueprint $table) {
+            $table->id(); // Nuevo campo PK autoincremental
             $table->string('cui_alumno', 15);
             $table->string('cui_tutor', 15);
             $table->string('nombre_tutor', 60);
-            $table->string('telefono', 15);
-            $table->primary(['cui_alumno', 'cui_tutor']);
+            $table->string('telefono', 15)->nullable();
+            $table->timestamps();
+
+            $table->unique(['cui_alumno', 'cui_tutor']); // índice único para evitar duplicados
             $table->foreign('cui_alumno')->references('cui')->on('alumno')->onDelete('cascade');
         });
+
 
         Schema::create('horario_clase', function (Blueprint $table) {
             $table->id('id_horario');

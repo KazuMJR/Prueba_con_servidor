@@ -13,7 +13,7 @@
 <header class="navbar">
     <div class="logo">MINEDUC</div>
     <nav class="nav-links">
-        @foreach([ 'escuelas', 'alumnos', 'catedraticos', 'grados', 'secciones', 'cursos', 'programas', 'inscripciones', 'tutelares', 'horarios', 'calendarios', 'asignaciones', 'actividades' ] as $entidad)
+        @foreach([ 'escuelas', 'alumnos', 'catedraticos', 'grados', 'secciones', 'cursos', 'programas', 'inscripciones', 'tutelares', 'horario_clase', 'calendarios', 'asignaciones', 'actividades' ] as $entidad)
             <a href="{{ route($entidad . '.index') }}">{{ ucfirst($entidad) }}</a>
         @endforeach
     </nav>
@@ -22,7 +22,7 @@
 <main class="container">
     <h1 class="page-title">Panel Principal - MINEDUC</h1>
     <section class="card-grid">
-        @foreach([ 'escuelas', 'alumnos', 'catedraticos', 'grados', 'secciones', 'cursos', 'programas', 'inscripciones', 'tutelares', 'horarios', 'calendarios', 'asignaciones', 'actividades' ] as $entidad)
+        @foreach([ 'escuelas', 'alumnos', 'catedraticos', 'grados', 'secciones', 'cursos', 'programas', 'inscripciones', 'tutelares', 'horario_clase', 'calendarios', 'asignaciones', 'actividades' ] as $entidad)
             <div class="card">
                 <h2>{{ ucfirst($entidad) }}</h2>
                 <p>Gestión y visualización de {{ $entidad }}.</p>

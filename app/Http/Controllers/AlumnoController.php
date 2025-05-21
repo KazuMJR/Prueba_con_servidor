@@ -27,7 +27,7 @@ class AlumnoController extends Controller
             'nombre_alumno' => 'required|string|max:60',
             'edad' => 'required|integer|min:1',
             'sexo' => 'required|string|in:M,F',
-            'inscripcion_codigo' => 'required|exists:inscripcion,codigo',
+
         ]);
 
         Alumno::create($request->all());
@@ -53,7 +53,7 @@ class AlumnoController extends Controller
             'nombre_alumno' => 'required|string|max:60',
             'edad' => 'required|integer|min:1',
             'sexo' => 'required|string|in:M,F',
-            'inscripcion_codigo' => 'required|exists:inscripcion,codigo',
+
         ]);
 
         $alumno->update($request->all());

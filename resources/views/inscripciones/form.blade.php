@@ -2,41 +2,63 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>@isset($inscripcion) Editar Inscripción @else Crear Inscripción @endisset</title>
+    <title>{{ isset($inscripcion) ? 'Editar' : 'Nueva' }} Inscripción</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ asset('styles/formularios.css') }}">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
-    <div class="container">
-        <h1>@isset($inscripcion) Editar Inscripción @else Crear Inscripción @endisset</h1>
+<div class="container py-4">
+    <h1 class="mb-4">{{ isset($inscripcion) ? 'Editar' : 'Nueva' }} Inscripción</h1>
 
-        <form method="POST" action="@isset($inscripcion) {{ route('inscripciones.update', $inscripcion) }} @else {{ route('inscripciones.store') }} @endisset">
-            @csrf
-            @isset($inscripcion)
-                @method('PUT')
-            @endisset
+    <form method="POST" action="{{ isset($inscripcion) ? route('inscripciones.update', $inscripcion) : route('inscripciones.store') }}">
+        @csrf
+        @if(isset($inscripcion))
+            @method('PUT')
+        @endif
 
-            <input type="text" name="codigo" value="{{ old('codigo', $inscripcion->codigo ?? '') }}" placeholder="Código de Inscripción" required>
-            <input type="date" name="fecha" value="{{ old('fecha', $inscripcion->fecha ?? '') }}" placeholder="Fecha" required>
+        {{-- Mostrar errores --}}
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-            <label for="cui">Alumno</label>
-            <select name="cui" required>
-                <option value="">Seleccionar Alumno</option>
-                @foreach($alumnos as $alumno)
-                    <option value="{{ $alumno->cui }}" @if(old('cui', $inscripcion->alumno->cui ?? '') == $alumno->cui) selected @endif>
-                        {{ $alumno->nombre_alumno }}
-                    </option>
-                @endforeach
-            </select>
-
-            <button type="submit">@isset($inscripcion) Actualizar @else Crear @endisset Inscripción</button>
-        </form>
-
-        <div class="actions">
-            <a href="{{ route('inscripciones.index') }}">Volver al listado</a>
+        <div class="mb-3">
+            <label for="codigo" class="form-label">Código</label>
+            <input type="text"
+                   name="codigo"
+                   id="codigo"
+                   value="{{ old('codigo', $inscripcion->codigo ?? '') }}"
+                   class="form-control"
+                   {{ isset($inscripcion) ? 'readonly' : '' }}
+                   required>
         </div>
-    </div>
+
+        <div class="mb-3">
+            <label for="fecha" class="form-label">Fecha</label>
+            <input type="date"
+                   name="fecha"
+                   id="fecha"
+                   value="{{ old('fecha', $inscripcion->fecha ?? '') }}"
+                   class="form-control"
+                   required>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <a href="{{ route('inscripciones.index') }}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-success">{{ isset($inscripcion) ? 'Actualizar' : 'Guardar' }}</button>
+        </div>
+    </form>
+</div>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

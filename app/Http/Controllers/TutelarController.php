@@ -2,63 +2,93 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tutelar;
+use App\Models\Alumno;
 use Illuminate\Http\Request;
 
 class TutelarController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $tutelares = Tutelar::with('alumno')->get();
+        return view('tutelares.index', compact('tutelares'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $alumnos = Alumno::all();
+        return view('tutelares.form', compact('alumnos'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'cui_alumno' => 'required|string|exists:alumno,cui',
+            'cui_tutor' => 'required|string|max:15',
+            'nombre_tutor' => 'required|string|max:60',
+            'telefono' => 'nullable|string|max:15',
+        ]);
+
+        $exists = Tutelar::where('cui_alumno', $request->cui_alumno)
+            ->where('cui_tutor', $request->cui_tutor)
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors([
+                'cui_tutor' => 'Este tutor ya está asignado para este alumno.'
+            ])->withInput();
+        }
+
+        Tutelar::create($request->only('cui_alumno', 'cui_tutor', 'nombre_tutor', 'telefono'));
+
+        return redirect()->route('tutelares.index')->with('success', 'Tutor asignado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($cui_alumno, $cui_tutor)
     {
-        //
+        $tutelar = Tutelar::with('alumno')
+            ->where('cui_alumno', $cui_alumno)
+            ->where('cui_tutor', $cui_tutor)
+            ->firstOrFail();
+
+        return view('tutelares.show', compact('tutelar'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit($cui_alumno, $cui_tutor)
     {
-        //
+        $tutelar = Tutelar::where('cui_alumno', $cui_alumno)
+            ->where('cui_tutor', $cui_tutor)
+            ->firstOrFail();
+
+        $alumnos = Alumno::all();
+
+        return view('tutelares.form', compact('tutelar', 'alumnos'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $cui_alumno, $cui_tutor)
     {
-        //
+        $request->validate([
+            'nombre_tutor' => 'required|string|max:60',
+            'telefono' => 'nullable|string|max:15',
+        ]);
+
+        $tutelar = Tutelar::where('cui_alumno', $cui_alumno)
+            ->where('cui_tutor', $cui_tutor)
+            ->firstOrFail();
+
+        $tutelar->update($request->only('nombre_tutor', 'telefono'));
+
+        return redirect()->route('tutelares.index')->with('success', 'Tutor actualizado correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($cui_alumno, $cui_tutor)
     {
-        //
+        $tutelar = Tutelar::where('cui_alumno', $cui_alumno)
+            ->where('cui_tutor', $cui_tutor)
+            ->firstOrFail();
+
+        $tutelar->delete();
+
+        return redirect()->route('tutelares.index')->with('success', 'Tutor eliminado correctamente.');
     }
 }

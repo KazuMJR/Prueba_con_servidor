@@ -2,63 +2,70 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Inscripcion;
 use Illuminate\Http\Request;
 
 class InscripcionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Mostrar listado de inscripciones
     public function index()
     {
-        //
+        $inscripciones = Inscripcion::all();
+        return view('inscripciones.index', compact('inscripciones'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // Mostrar formulario para crear nueva inscripcion
     public function create()
     {
-        //
+        return view('inscripciones.form');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Guardar nueva inscripcion
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'codigo' => 'required|string|unique:inscripcion,codigo',
+            'fecha' => 'required|date',
+        ]);
+
+        Inscripcion::create($request->only('codigo', 'fecha'));
+
+        return redirect()->route('inscripciones.index')
+            ->with('success', 'Inscripción creada correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // Mostrar detalle de una inscripcion
+    public function show(Inscripcion $inscripcion)
     {
-        //
+        return view('inscripciones.show', compact('inscripcion'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    // Mostrar formulario para editar inscripcion
+    public function edit(Inscripcion $inscripcion)
     {
-        //
+        return view('inscripciones.form', compact('inscripcion'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    // Actualizar inscripcion
+    public function update(Request $request, Inscripcion $inscripcion)
     {
-        //
+        $request->validate([
+            'fecha' => 'required|date',
+        ]);
+
+        // No se actualiza 'codigo' porque es PK y no incrementable
+        $inscripcion->update($request->only('fecha'));
+
+        return redirect()->route('inscripciones.index')
+            ->with('success', 'Inscripción actualizada correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    // Eliminar inscripcion
+    public function destroy(Inscripcion $inscripcion)
     {
-        //
+        $inscripcion->delete();
+
+        return redirect()->route('inscripciones.index')
+            ->with('success', 'Inscripción eliminada correctamente.');
     }
 }

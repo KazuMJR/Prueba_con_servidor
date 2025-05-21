@@ -19,7 +19,7 @@ class Alumno extends Model
         'nombre_alumno',
         'edad',
         'sexo',
-        'inscripcion_codigo',
+
     ];
 
     // Relación con Inscripción

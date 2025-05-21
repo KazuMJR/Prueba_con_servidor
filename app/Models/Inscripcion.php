@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Inscripcion extends Model
 {
     protected $table = 'inscripcion';
+
     protected $primaryKey = 'codigo';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -18,9 +21,15 @@ class Inscripcion extends Model
 
     public $timestamps = false;
 
-    // Relación con Alumno
+
+    public function getRouteKeyName()
+    {
+        return 'codigo';
+    }
+
+
     public function alumno()
     {
-        return $this->belongsTo(Alumno::class, 'inscripcion_codigo', 'codigo');
+        return $this->hasOne(Alumno::class, 'inscripcion_codigo', 'codigo');
     }
 }

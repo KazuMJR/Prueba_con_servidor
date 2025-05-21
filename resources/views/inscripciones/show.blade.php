@@ -2,25 +2,29 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Ver Inscripción</title>
+    <title>Detalle de Inscripción</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ asset('styles/show.css') }}">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
-    <div class="container">
-        <h1>Detalles de la Inscripción</h1>
+<div class="container py-4">
+    <h1 class="mb-4">Detalle de Inscripción</h1>
 
-        <div class="card">
-            <p><strong>Código:</strong> {{ $inscripcion->codigo }}</p>
-            <p><strong>Fecha:</strong> {{ $inscripcion->fecha }}</p>
-            <p><strong>Alumno:</strong> {{ $inscripcion->alumno->nombre_alumno }}</p>
-        </div>
-
-        <div class="actions">
-            <a href="{{ route('inscripciones.index') }}">Volver al listado</a>
+    <div class="card mb-3" style="max-width: 400px;">
+        <div class="card-body">
+            <h5 class="card-title">Código: {{ $inscripcion->codigo }}</h5>
+            <p class="card-text"><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($inscripcion->fecha)->format('d/m/Y') }}</p>
         </div>
     </div>
+
+    <a href="{{ route('inscripciones.index') }}" class="btn btn-secondary me-2">Volver</a>
+    <a href="{{ route('inscripciones.edit', $inscripcion) }}" class="btn btn-warning">Editar</a>
+</div>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

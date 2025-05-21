@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth; // Importar Auth para logout
 use App\Http\Controllers\EscuelaController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\AlumnoController;
@@ -14,17 +15,22 @@ use App\Http\Controllers\CursoController;
 use App\Http\Controllers\ProgramaCursoController;
 use App\Http\Controllers\ActividadClaseController;
 use App\Http\Controllers\AsignacionController;
+use App\Http\Controllers\ProfileController; // Importa el controlador ProfileController
+
+// Ruta dashboard agregada para evitar error "Route [dashboard] not defined."
+Route::get('/dashboard', function () {
+    return redirect()->route('horario_clase.index'); // Cambia a la ruta que prefieras
+})->name('dashboard');
 
 Route::view('/', 'principal');
 
+// Recursos con resource simple (en plural y consistentes)
 Route::resources([
     'escuelas' => EscuelaController::class,
-    'inscripciones' => InscripcionController::class,
     'alumnos' => AlumnoController::class,
-    'tutelares' => TutelarController::class,
     'catedraticos' => CatedraticoController::class,
     'grados' => GradoController::class,
-    'horarios' => HorarioClaseController::class,
+    'horario_clase' => HorarioClaseController::class, // corregido aquí
     'calendarios' => CalendarioExamenController::class,
     'cursos' => CursoController::class,
     'programas' => ProgramaCursoController::class,
@@ -32,7 +38,29 @@ Route::resources([
     'asignaciones' => AsignacionController::class,
 ]);
 
-// Corrige la ruta de 'secciones' con el nombre correcto del parámetro
+// Recursos con parámetros personalizados
+Route::resource('inscripciones', InscripcionController::class)->parameters([
+    'inscripciones' => 'inscripcion',
+]);
+
 Route::resource('secciones', SeccionController::class)->parameters([
     'secciones' => 'seccion',
 ]);
+
+// Rutas manuales para Tutelares (clave primaria compuesta)
+Route::get('tutelares', [TutelarController::class, 'index'])->name('tutelares.index');
+Route::get('tutelares/create', [TutelarController::class, 'create'])->name('tutelares.create');
+Route::post('tutelares', [TutelarController::class, 'store'])->name('tutelares.store');
+Route::get('tutelares/{cui_alumno}/{cui_tutor}', [TutelarController::class, 'show'])->name('tutelares.show');
+Route::get('tutelares/{cui_alumno}/{cui_tutor}/edit', [TutelarController::class, 'edit'])->name('tutelares.edit');
+Route::put('tutelares/{cui_alumno}/{cui_tutor}', [TutelarController::class, 'update'])->name('tutelares.update');
+Route::delete('tutelares/{cui_alumno}/{cui_tutor}', [TutelarController::class, 'destroy'])->name('tutelares.destroy');
+
+// Ruta para editar perfil (profile.edit)
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+
+// Ruta logout para evitar error "Route [logout] not defined."
+Route::post('/logout', function () {
+    Auth::logout();
+    return redirect('/');
+})->name('logout');

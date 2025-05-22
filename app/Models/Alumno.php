@@ -14,8 +14,12 @@ class Alumno extends Model
 
     // Clave primaria
     protected $primaryKey = 'cui';
-    public $incrementing = false;   // porque 'cui' no es auto-incremental
-    protected $keyType = 'string';  // porque 'cui' es string
+
+    // 'cui' no es auto-incremental y es string
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+    // No usar timestamps si no están en la tabla
     public $timestamps = false;
 
     protected $fillable = [
@@ -25,7 +29,7 @@ class Alumno extends Model
         'sexo',
     ];
 
-    // Un alumno puede tener muchas inscripciones
+    // Relación con inscripciones
     public function inscripciones()
     {
         return $this->hasMany(Inscripcion::class, 'cui_alumno', 'cui');

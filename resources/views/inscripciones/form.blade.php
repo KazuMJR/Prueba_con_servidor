@@ -50,6 +50,19 @@
                    required>
         </div>
 
+        <div class="mb-3">
+            <label for="cui_alumno" class="form-label">Alumno</label>
+            <select name="cui_alumno" id="cui_alumno" class="form-control" required>
+                <option value="">Seleccione un alumno</option>
+                @foreach ($alumnos as $alumno)
+                    <option value="{{ $alumno->cui }}"
+                        {{ old('cui_alumno', $inscripcion->cui_alumno ?? '') == $alumno->cui ? 'selected' : '' }}>
+                        {{ $alumno->nombre_alumno }} ({{ $alumno->cui }})
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
         <div class="d-flex justify-content-between">
             <a href="{{ route('inscripciones.index') }}" class="btn btn-secondary">Cancelar</a>
             <button type="submit" class="btn btn-success">{{ isset($inscripcion) ? 'Actualizar' : 'Guardar' }}</button>

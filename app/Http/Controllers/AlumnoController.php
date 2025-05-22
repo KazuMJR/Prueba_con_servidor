@@ -16,17 +16,23 @@ class AlumnoController extends Controller
 
     public function create()
     {
-        $inscripciones = Inscripcion::all();
-        return view('alumnos.create', compact('inscripciones'));
+        // No necesitas pasar inscripciones para crear un alumno
+        return view('alumnos.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'cui' => 'required|string|max:15|unique:alumno,cui',  // tabla 'alumno' singular
+            'cui' => 'required|string|max:15|unique:alumno,cui', // nombre tabla 'alumno'
             'nombre_alumno' => 'required|string|max:60',
             'edad' => 'required|integer|min:1',
             'sexo' => 'required|string|in:M,F',
+        ], [
+            'cui.unique' => 'El CUI ya está registrado.',
+            'cui.required' => 'El CUI es obligatorio.',
+            'nombre_alumno.required' => 'El nombre del alumno es obligatorio.',
+            'edad.required' => 'La edad es obligatoria.',
+            'sexo.required' => 'El sexo es obligatorio.',
         ]);
 
         Alumno::create($request->all());
@@ -41,18 +47,23 @@ class AlumnoController extends Controller
 
     public function edit(Alumno $alumno)
     {
-        $inscripciones = Inscripcion::all();
-        return view('alumnos.edit', compact('alumno', 'inscripciones'));
+        // No necesitas inscripciones para editar un alumno
+        return view('alumnos.edit', compact('alumno'));
     }
 
     public function update(Request $request, Alumno $alumno)
     {
         $request->validate([
-            // Aquí la clave primaria es 'cui', por eso la regla unique usa 'cui' como campo de exclusión
             'cui' => 'required|string|max:15|unique:alumno,cui,' . $alumno->cui . ',cui',
             'nombre_alumno' => 'required|string|max:60',
             'edad' => 'required|integer|min:1',
             'sexo' => 'required|string|in:M,F',
+        ], [
+            'cui.unique' => 'El CUI ya está registrado.',
+            'cui.required' => 'El CUI es obligatorio.',
+            'nombre_alumno.required' => 'El nombre del alumno es obligatorio.',
+            'edad.required' => 'La edad es obligatoria.',
+            'sexo.required' => 'El sexo es obligatorio.',
         ]);
 
         $alumno->update($request->all());

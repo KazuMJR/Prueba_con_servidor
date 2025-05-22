@@ -29,6 +29,7 @@
             <tr>
                 <th>Código</th>
                 <th>Fecha</th>
+                <th>Alumno</th>
                 <th style="width: 180px;">Acciones</th>
             </tr>
             </thead>
@@ -37,6 +38,7 @@
                 <tr>
                     <td>{{ $inscripcion->codigo }}</td>
                     <td>{{ \Carbon\Carbon::parse($inscripcion->fecha)->format('d/m/Y') }}</td>
+                    <td>{{ $inscripcion->alumno->nombre_alumno ?? 'No asignado' }}</td>
                     <td>
                         <a href="{{ route('inscripciones.show', $inscripcion->codigo) }}" class="btn btn-sm btn-info me-1">Ver</a>
                         <a href="{{ route('inscripciones.edit', $inscripcion->codigo) }}" class="btn btn-sm btn-warning me-1">Editar</a>

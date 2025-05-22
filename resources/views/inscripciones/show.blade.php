@@ -16,6 +16,16 @@
         <div class="card-body">
             <h5 class="card-title">Código: {{ $inscripcion->codigo }}</h5>
             <p class="card-text"><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($inscripcion->fecha)->format('d/m/Y') }}</p>
+
+            @if($inscripcion->alumno)
+                <hr>
+                <h6>Datos del Alumno</h6>
+                <p><strong>Nombre:</strong> {{ $inscripcion->alumno->nombre_alumno }}</p>
+                <p><strong>Edad:</strong> {{ $inscripcion->alumno->edad }}</p>
+                <p><strong>Sexo:</strong> {{ $inscripcion->alumno->sexo }}</p>
+            @else
+                <p class="text-muted">No hay alumno asignado a esta inscripción.</p>
+            @endif
         </div>
     </div>
 

@@ -13,7 +13,8 @@ class SeccionFactory extends Factory
     {
         return [
             // Generar una letra aleatoria A-Z
-           'letra' => strtoupper($this->faker->unique()->randomLetter),
+            'letra' => strtoupper($this->faker->unique()->randomLetter),
+
         ];
     }
 }

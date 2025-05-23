@@ -25,8 +25,6 @@
             <a href="{{ url('/') }}" class="btn btn-secondary me-2">Volver al Panel</a>
             <a href="{{ route('alumnos.create') }}" class="btn btn-primary">Agregar Alumno</a>
         </div>
-
-        //barra de busqueda
         <div>
             <input
                 type="text"
@@ -97,8 +95,6 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-
 
 <!-- Animación para ocultar mensajes -->
 <script>

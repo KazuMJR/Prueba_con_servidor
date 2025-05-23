@@ -2,63 +2,62 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActividadClase;
 use Illuminate\Http\Request;
 
 class ActividadClaseController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $actividades = ActividadClase::all();
+        return view('actividades.index', compact('actividades'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        // Pasamos null para indicar que estamos creando (no editando)
+        return view('actividades.form', ['actividad' => null]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'descripcion' => 'required|string',
+        ]);
+
+        ActividadClase::create($request->all());
+
+        return redirect()->route('actividades.index')
+            ->with('success', 'Actividad creada exitosamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(ActividadClase $actividad)
     {
-        //
+        return view('actividades.show', compact('actividad'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(ActividadClase $actividad)
     {
-        //
+        return view('actividades.form', compact('actividad'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, ActividadClase $actividad)
     {
-        //
+        $request->validate([
+            'descripcion' => 'required|string',
+        ]);
+
+        $actividad->update($request->all());
+
+        return redirect()->route('actividades.index')
+            ->with('success', 'Actividad actualizada exitosamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(ActividadClase $actividad)
     {
-        //
+        $actividad->delete();
+
+        return redirect()->route('actividades.index')
+            ->with('success', 'Actividad eliminada exitosamente.');
     }
 }

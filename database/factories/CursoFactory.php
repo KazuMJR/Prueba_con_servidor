@@ -2,20 +2,23 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Curso;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CursoFactory extends Factory
 {
     protected $model = Curso::class;
 
-    public function definition(): array
+    public function definition()
     {
+        $nombres = [
+            'Matemáticas', 'Lengua', 'Historia',
+            'Ciencias', 'Física', 'Química',
+            'Arte', 'Educación Física', 'Inglés'
+        ];
+
         return [
-            'nombre_curso' => $this->faker->unique()->randomElement([
-                'Matemática', 'Lenguaje', 'Ciencias Naturales', 'Civismo', 'Historia',
-                'Educación Física', 'Inglés', 'Computación', 'Música', 'Arte'
-            ])
+            'nombre_curso' => $this->faker->randomElement($nombres),
         ];
     }
 }

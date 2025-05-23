@@ -35,8 +35,16 @@ Route::resources([
     'calendarios' => CalendarioExamenController::class,
     'cursos' => CursoController::class,
     'programas' => ProgramaCursoController::class,
-    'actividades' => ActividadClaseController::class,
-    'asignaciones' => AsignacionController::class,
+]);
+
+// Recurso actividades con parámetro singular personalizado para evitar error de ruta
+Route::resource('actividades', ActividadClaseController::class)->parameters([
+    'actividades' => 'actividad',
+]);
+
+// Recurso Asignacion con parámetro personalizado para usar 'asignacion'
+Route::resource('asignaciones', AsignacionController::class)->parameters([
+    'asignaciones' => 'asignacion',
 ]);
 
 // Recursos con parámetros personalizados

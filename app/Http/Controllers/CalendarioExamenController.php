@@ -2,63 +2,65 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CalendarioExamenes;
 use Illuminate\Http\Request;
 
 class CalendarioExamenController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+public function index()
+{
+$examenes = CalendarioExamenes::all();
+return view('calendarios.index', compact('examenes'));
+}
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+public function create()
+{
+// Pasamos null con el mismo nombre que espera la vista
+return view('calendarios.form', ['calendario' => null]);
+}
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+public function store(Request $request)
+{
+$request->validate([
+'fecha' => 'required|date',
+'descripcion' => 'required|string',
+]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+CalendarioExamenes::create($request->all());
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+return redirect()->route('calendarios.index')
+->with('success', 'Examen creado exitosamente.');
+}
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+// Cambié $calendario_examen a $calendario para que coincida con la ruta y la vista
+public function show(CalendarioExamenes $calendario)
+{
+return view('calendarios.show', compact('calendario'));
+}
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+public function edit(CalendarioExamenes $calendario)
+{
+return view('calendarios.form', compact('calendario'));
+}
+
+public function update(Request $request, CalendarioExamenes $calendario)
+{
+$request->validate([
+'fecha' => 'required|date',
+'descripcion' => 'required|string',
+]);
+
+$calendario->update($request->all());
+
+return redirect()->route('calendarios.index')
+->with('success', 'Examen actualizado exitosamente.');
+}
+
+public function destroy(CalendarioExamenes $calendario)
+{
+$calendario->delete();
+
+return redirect()->route('calendarios.index')
+->with('success', 'Examen eliminado exitosamente.');
+}
 }

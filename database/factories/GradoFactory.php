@@ -13,8 +13,8 @@ class GradoFactory extends Factory
     {
         $niveles = [
             'Primaria',
-            'Secundaria',
-            'Preparatoria'
+            'Basico',
+            'Diversificado',
         ];
 
         return [

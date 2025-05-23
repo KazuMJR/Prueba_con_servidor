@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Inscripcion extends Model
 {
-
     use HasFactory;
 
     protected $table = 'inscripcion';

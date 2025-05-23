@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Tutelar extends Model
 {
-
     use HasFactory;
 
     protected $table = 'tutelares';
@@ -19,7 +18,7 @@ class Tutelar extends Model
 
     protected $keyType = 'int';
 
-    public $timestamps = true;
+    public $timestamps = true; // si tienes timestamps en la tabla
 
     protected $fillable = [
         'cui_alumno',

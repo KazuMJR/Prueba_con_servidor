@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>Escuelas Registradas - MINEDUC</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ asset('styles/vistasIndex.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('styles/vistasIndex.css') }}">
+
 
 </head>
 <body>

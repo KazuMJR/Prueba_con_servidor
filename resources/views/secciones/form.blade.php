@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ isset($seccion) ? 'Editar Sección' : 'Crear Sección' }}</title>
-    <link rel="stylesheet" href="{{ asset('styles/formularios.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('styles/formularios.css') }}">
 </head>
 <body>
 <div class="container">

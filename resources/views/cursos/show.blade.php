@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Detalles del Curso</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ asset('styles/show.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('styles/show.css') }}">
 </head>
 <body>
 <div class="container">

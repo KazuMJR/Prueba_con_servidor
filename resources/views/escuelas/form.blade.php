@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>@isset($escuela) Editar Escuela @else Crear Escuela @endisset</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ asset('styles/formularios.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('styles/formularios.css') }}">
 
 </head>
 <body>

@@ -3,27 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Models\Alumno;
-use App\Models\Inscripcion;
 use Illuminate\Http\Request;
 
 class AlumnoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $alumnos = Alumno::all();
-        return view('alumnos.index', compact('alumnos'));
+        $busqueda = $request->input('busqueda');
+
+        $alumnos = Alumno::when($busqueda, function ($query, $busqueda) {
+            return $query->where('cui', 'like', "%$busqueda%")
+                         ->orWhere('nombre_alumno', 'like', "%$busqueda%");
+        })->paginate(20)->withQueryString();
+
+        return view('alumnos.index', compact('alumnos', 'busqueda'));
     }
 
     public function create()
     {
-        // No necesitas pasar inscripciones para crear un alumno
         return view('alumnos.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'cui' => 'required|string|max:15|unique:alumno,cui', // nombre tabla 'alumno'
+            'cui' => 'required|string|max:15|unique:alumno,cui',
             'nombre_alumno' => 'required|string|max:60',
             'edad' => 'required|integer|min:1',
             'sexo' => 'required|string|in:M,F',
@@ -37,7 +41,7 @@ class AlumnoController extends Controller
 
         Alumno::create($request->all());
 
-        return redirect()->route('alumnos.index')->with('success', 'Alumno creado con éxito.');
+        return redirect()->route('alumnos.index', ['busqueda' => $request->busqueda])->with('success', 'Alumno creado con éxito.');
     }
 
     public function show(Alumno $alumno)
@@ -47,7 +51,6 @@ class AlumnoController extends Controller
 
     public function edit(Alumno $alumno)
     {
-        // No necesitas inscripciones para editar un alumno
         return view('alumnos.edit', compact('alumno'));
     }
 
@@ -68,36 +71,24 @@ class AlumnoController extends Controller
 
         $alumno->update($request->all());
 
-        return redirect()->route('alumnos.index')->with('success', 'Alumno actualizado con éxito.');
+        return redirect()->route('alumnos.index', ['busqueda' => $request->busqueda])->with('success', 'Alumno actualizado con éxito.');
     }
 
-    public function destroy(Alumno $alumno)
+    public function destroy(Request $request, Alumno $alumno)
     {
         $alumno->delete();
-        return redirect()->route('alumnos.index')->with('success', 'Alumno eliminado correctamente.');
+        return redirect()->route('alumnos.index', ['busqueda' => $request->busqueda])->with('success', 'Alumno eliminado correctamente.');
     }
 
-    // Método para mostrar estadística por edad (usado en la vista principal)
     public function panelPrincipal()
-    {
-        $estadisticasEdades = Alumno::select('edad')
-            ->get()
-            ->groupBy('edad')
-            ->map(fn($group) => $group->count())
-            ->sortKeys();
+{
+    $estadisticasEdades = \App\Models\Alumno::select('edad')
+        ->get()
+        ->groupBy('edad')
+        ->map(fn($grupo) => $grupo->count())
+        ->sortKeys();
 
-        return view('principal', compact('estadisticasEdades'));
-    }
+    return view('principal', compact('estadisticasEdades'));
+}
 
-    // Función para estadística específica de alumnos por edad (opcional)
-    public function estadisticaPorEdad()
-    {
-        $estadisticasEdades = Alumno::select('edad')
-            ->get()
-            ->groupBy('edad')
-            ->map(fn($group) => $group->count())
-            ->sortKeys();
-
-        return view('alumnos.estadistica', compact('estadisticasEdades'));
-    }
 }

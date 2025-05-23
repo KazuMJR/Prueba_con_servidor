@@ -3,14 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class HorarioClase extends Model
 {
-    protected $table = 'horario_clase';  // nombre exacto de la tabla
+
+    use HasFactory;
+
+    protected $table = 'horario_clase'; 
 
     protected $primaryKey = 'id_horario';
 
-    public $timestamps = false; // si no tienes created_at, updated_at
+    public $timestamps = false;
 
     protected $fillable = [
         'hora_inicio',

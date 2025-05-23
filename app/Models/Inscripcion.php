@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Inscripcion extends Model
 {
+
+    use HasFactory;
+
     protected $table = 'inscripcion';
 
     protected $primaryKey = 'codigo';

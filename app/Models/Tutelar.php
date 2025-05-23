@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Tutelar extends Model
 {
+
+    use HasFactory;
+
     protected $table = 'tutelares';
 
     // Ahora la PK es un campo entero autoincremental llamado 'id'
@@ -15,7 +19,7 @@ class Tutelar extends Model
 
     protected $keyType = 'int';
 
-    public $timestamps = true; // si tienes timestamps en la tabla
+    public $timestamps = true;
 
     protected $fillable = [
         'cui_alumno',

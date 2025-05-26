@@ -16,16 +16,23 @@ use App\Http\Controllers\ProgramaCursoController;
 use App\Http\Controllers\ActividadClaseController;
 use App\Http\Controllers\AsignacionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EstadisticaController;
 
 // Ruta dashboard para evitar error "Route [dashboard] not defined."
 Route::get('/dashboard', function () {
     return redirect()->route('horario_clase.index'); // Cambia según tu preferencia
 })->name('dashboard');
 
-// Ruta principal modificada para cargar estadística de alumnos por edad desde AlumnoController@panelPrincipal
-Route::get('/', [AlumnoController::class, 'panelPrincipal'])->name('principal');
+// Ruta para vista estadística general (estadistica.blade.php)
+Route::get('/estadistica', [EstadisticaController::class, 'index'])->name('estadistica');
 
-// Recursos con resource simple (en plural y consistentes)
+// Ruta principal
+Route::get('/', function () {
+    return view('principal');
+})->name('principal');
+
+
+// Recursos con resource simple
 Route::resources([
     'escuelas' => EscuelaController::class,
     'alumnos' => AlumnoController::class,
@@ -37,17 +44,17 @@ Route::resources([
     'programas' => ProgramaCursoController::class,
 ]);
 
-// Recurso actividades con parámetro singular personalizado para evitar error de ruta
+// Recurso actividades con parámetro singular personalizado
 Route::resource('actividades', ActividadClaseController::class)->parameters([
     'actividades' => 'actividad',
 ]);
 
-// Recurso Asignacion con parámetro personalizado para usar 'asignacion'
+// Recurso asignaciones con parámetros personalizados
 Route::resource('asignaciones', AsignacionController::class)->parameters([
     'asignaciones' => 'asignacion',
 ]);
 
-// Recursos con parámetros personalizados
+// Recursos adicionales con parámetros personalizados
 Route::resource('inscripciones', InscripcionController::class)->parameters([
     'inscripciones' => 'inscripcion',
 ]);
@@ -56,7 +63,7 @@ Route::resource('secciones', SeccionController::class)->parameters([
     'secciones' => 'seccion',
 ]);
 
-// Rutas manuales para Tutelares (clave primaria compuesta)
+// Rutas para tutelares con clave primaria compuesta
 Route::get('tutelares', [TutelarController::class, 'index'])->name('tutelares.index');
 Route::get('tutelares/create', [TutelarController::class, 'create'])->name('tutelares.create');
 Route::post('tutelares', [TutelarController::class, 'store'])->name('tutelares.store');
@@ -65,7 +72,7 @@ Route::get('tutelares/{cui_alumno}/{cui_tutor}/edit', [TutelarController::class,
 Route::put('tutelares/{cui_alumno}/{cui_tutor}', [TutelarController::class, 'update'])->name('tutelares.update');
 Route::delete('tutelares/{cui_alumno}/{cui_tutor}', [TutelarController::class, 'destroy'])->name('tutelares.destroy');
 
-// Ruta para editar perfil (profile.edit)
+// Ruta para editar perfil
 Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
 
 // Ruta logout para evitar error "Route [logout] not defined."

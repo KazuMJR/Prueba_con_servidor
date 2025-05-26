@@ -91,14 +91,4 @@ class AlumnoController extends Controller
                          ->with('success', 'Alumno eliminado correctamente.');
     }
 
-    public function panelPrincipal()
-    {
-        $estadisticasEdades = Alumno::select('edad')
-            ->get()
-            ->groupBy('edad')
-            ->map(fn($grupo) => $grupo->count())
-            ->sortKeys();
-
-        return view('principal', compact('estadisticasEdades'));
-    }
 }

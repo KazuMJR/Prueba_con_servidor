@@ -8,16 +8,21 @@ use Illuminate\Http\Request;
 class AlumnoController extends Controller
 {
     public function index(Request $request)
-    {
-        $busqueda = $request->input('busqueda');
+{
+    $busqueda = $request->input('busqueda');
 
-        $alumnos = Alumno::when($busqueda, function ($query, $busqueda) {
-            return $query->where('cui', 'like', "%$busqueda%")
-                         ->orWhere('nombre_alumno', 'like', "%$busqueda%");
-        })->paginate(20)->withQueryString();
+    $alumnos = Alumno::when($busqueda, function ($query, $busqueda) {
+        return $query->where('cui', 'like', "%$busqueda%")
+                     ->orWhere('nombre_alumno', 'like', "%$busqueda%");
+    })->paginate(20)->withQueryString();
 
-        return view('alumnos.index', compact('alumnos', 'busqueda'));
+    if ($request->ajax()) {
+        // Retornamos la vista parcial con solo tbody y paginacion
+        return view('alumnos.partials.table', compact('alumnos', 'busqueda'));
     }
+
+    return view('alumnos.index', compact('alumnos', 'busqueda'));
+}
 
     public function create()
     {

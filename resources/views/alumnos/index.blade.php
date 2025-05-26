@@ -1,3 +1,8 @@
+@php
+    $esAjax = request()->ajax();
+@endphp
+
+@if(!$esAjax)
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -49,92 +54,71 @@
             {{ session('error') }}
         </div>
     @endif
+@endif
 
-    @if($alumnos->isEmpty())
-        <div class="alert alert-info">No hay alumnos registrados aún.</div>
-    @else
-        <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
-                <thead class="table-light">
-                <tr>
-                    <th>CUI</th>
-                    <th>Nombre</th>
-                    <th>Edad</th>
-                    <th>Sexo</th>
-                    <th style="width: 180px;">Acciones</th>
-                </tr>
-                </thead>
-                <tbody id="alumnosTableBody">
-                @foreach($alumnos as $alumno)
-                    <tr>
-                        <td>{{ $alumno->cui }}</td>
-                        <td>{{ $alumno->nombre_alumno }}</td>
-                        <td>{{ $alumno->edad }}</td>
-                        <td>{{ $alumno->sexo }}</td>
-                        <td>
-                            <a href="{{ route('alumnos.show', [$alumno, 'busqueda' => $busqueda]) }}" class="btn btn-sm btn-info me-1">Ver</a>
-                            <a href="{{ route('alumnos.edit', [$alumno, 'busqueda' => $busqueda]) }}" class="btn btn-sm btn-warning me-1">Editar</a>
-                            <form action="{{ route('alumnos.destroy', [$alumno, 'busqueda' => $busqueda]) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Eliminar este alumno?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
-        </div>
+@include('alumnos.partials.table')
 
-        <!-- Paginación -->
-        <nav>
-            {{ $alumnos->links('pagination::bootstrap-5') }}
-        </nav>
-    @endif
+@if(!$esAjax)
 </div>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Animación para ocultar mensajes -->
 <script>
-    window.addEventListener('DOMContentLoaded', () => {
-        const successMessage = document.getElementById('successMessage');
-        const errorMessage = document.getElementById('errorMessage');
+document.addEventListener('DOMContentLoaded', () => {
+    const inputBusqueda = document.getElementById('busqueda');
+    const tablaCuerpo = document.getElementById('alumnosTableBody');
+    const paginacionContenedor = document.getElementById('paginacionContenedor');
 
-        setTimeout(() => {
-            if (successMessage) successMessage.classList.add('hidden');
-            if (errorMessage) errorMessage.classList.add('hidden');
-        }, 3000);
+    function fetchAlumnos(url) {
+        fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.text())
+        .then(html => {
+            tablaCuerpo.innerHTML = html;
+
+            // Volver a asignar eventos a los links de paginación que están en el html del tbody + paginación
+            asignarEventosPaginacion();
+        });
+    }
+
+    // Al escribir en el input buscar
+    inputBusqueda.addEventListener('input', () => {
+        const busqueda = inputBusqueda.value;
+        const url = new URL("{{ route('alumnos.index') }}", window.location.origin);
+        url.searchParams.set('busqueda', busqueda);
+        url.searchParams.set('page', 1);
+
+        fetchAlumnos(url.href);
     });
-</script>
 
-<!-- Búsqueda con actualización en tiempo real -->
-<script>
-    document.getElementById('busqueda').addEventListener('input', function() {
-        const busqueda = this.value;
-        // Realizar petición GET con fetch a la misma ruta index con el parámetro busqueda
-        fetch(`{{ route('alumnos.index') }}?busqueda=${encodeURIComponent(busqueda)}`)
-            .then(response => response.text())
-            .then(html => {
-                // Extraer el tbody de la tabla de la respuesta HTML y reemplazarlo
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const nuevoTbody = doc.getElementById('alumnosTableBody');
-                const tabla = document.getElementById('alumnosTableBody');
-                if (nuevoTbody && tabla) {
-                    tabla.innerHTML = nuevoTbody.innerHTML;
-                }
-
-                // También actualizar la paginación (opcional)
-                const nuevaPaginacion = doc.querySelector('nav');
-                const paginacionActual = document.querySelector('nav');
-                if (nuevaPaginacion && paginacionActual) {
-                    paginacionActual.innerHTML = nuevaPaginacion.innerHTML;
-                }
+    // Agregar evento click a los links de paginación
+    function asignarEventosPaginacion() {
+        const links = document.querySelectorAll('#paginacionContenedor a');
+        links.forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                fetchAlumnos(link.href);
             });
-    });
+        });
+    }
+
+    // Inicializar eventos paginacion al cargar
+    asignarEventosPaginacion();
+
+    // Animación mensajes
+    const successMessage = document.getElementById('successMessage');
+    const errorMessage = document.getElementById('errorMessage');
+    setTimeout(() => {
+        if (successMessage) successMessage.classList.add('hidden');
+        if (errorMessage) errorMessage.classList.add('hidden');
+    }, 3000);
+});
 </script>
 
 </body>
 </html>
+@endif

@@ -78,24 +78,36 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(res => res.text())
         .then(html => {
-            tablaCuerpo.innerHTML = html;
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
 
-            // Volver a asignar eventos a los links de paginación que están en el html del tbody + paginación
-            asignarEventosPaginacion();
+            const nuevoTbody = doc.getElementById('alumnosTableBody');
+            if (nuevoTbody && tablaCuerpo) {
+                tablaCuerpo.innerHTML = nuevoTbody.innerHTML;
+            }
+
+            const nuevaPaginacion = doc.querySelector('#paginacionContenedor');
+            if (nuevaPaginacion && paginacionContenedor) {
+                paginacionContenedor.innerHTML = nuevaPaginacion.innerHTML;
+                asignarEventosPaginacion(); // Reasignar eventos
+            }
+        })
+        .catch(err => {
+            console.error("Error al cargar los datos:", err);
         });
     }
 
-    // Al escribir en el input buscar
     inputBusqueda.addEventListener('input', () => {
         const busqueda = inputBusqueda.value;
-        const url = new URL("{{ route('alumnos.index') }}", window.location.origin);
+
+        const baseUrl = "{{ route('alumnos.index') }}"; // HTTPS garantizado
+        const url = new URL(baseUrl);
         url.searchParams.set('busqueda', busqueda);
         url.searchParams.set('page', 1);
 
         fetchAlumnos(url.href);
     });
 
-    // Agregar evento click a los links de paginación
     function asignarEventosPaginacion() {
         const links = document.querySelectorAll('#paginacionContenedor a');
         links.forEach(link => {
@@ -106,10 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Inicializar eventos paginacion al cargar
     asignarEventosPaginacion();
 
-    // Animación mensajes
     const successMessage = document.getElementById('successMessage');
     const errorMessage = document.getElementById('errorMessage');
     setTimeout(() => {

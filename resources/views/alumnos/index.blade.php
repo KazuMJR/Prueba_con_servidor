@@ -100,7 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
     inputBusqueda.addEventListener('input', () => {
         const busqueda = inputBusqueda.value;
 
-        const baseUrl = "{{ route('alumnos.index') }}"; // HTTPS garantizado
+        // Aquí usamos location.origin para garantizar https, y concatenamos la ruta relativa
+        const baseUrl = location.origin + "{{ route('alumnos.index', [], false) }}";
         const url = new URL(baseUrl);
         url.searchParams.set('busqueda', busqueda);
         url.searchParams.set('page', 1);
@@ -128,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 3000);
 });
 </script>
+
 
 </body>
 </html>

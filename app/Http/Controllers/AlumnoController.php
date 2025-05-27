@@ -16,7 +16,7 @@ class AlumnoController extends Controller
                 $q->where('cui', 'like', "%$busqueda%")
                   ->orWhere('nombre_alumno', 'like', "%$busqueda%");
             });
-        })->paginate(20)->withQueryString();
+        })->paginate(10)->withQueryString();
 
         if ($request->ajax()) {
             return view('alumnos.partials.table', compact('alumnos', 'busqueda'));

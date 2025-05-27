@@ -7,10 +7,20 @@ use Illuminate\Http\Request;
 
 class EscuelaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $escuelas = Escuela::all();
-        return view('escuelas.index', compact('escuelas'));
+        $busqueda = $request->input('busqueda');
+
+        $escuelas = Escuela::when($busqueda, function ($query, $busqueda) {
+            return $query->where(function ($q) use ($busqueda) {
+                $q->where('nombre_escuela', 'like', "%$busqueda%")
+                  ->orWhere('direccion', 'like', "%$busqueda%")
+                  ->orWhere('codigo_establecimiento', 'like', "%$busqueda%")
+                  ->orWhere('zona', 'like', "%$busqueda%");
+            });
+        })->paginate(10)->withQueryString();
+
+        return view('escuelas.index', compact('escuelas', 'busqueda'));
     }
 
     public function create()
@@ -23,48 +33,46 @@ class EscuelaController extends Controller
         $request->validate([
             'nombre_escuela' => 'required|string|max:60',
             'direccion' => 'required|string|max:60',
-            'codigo_establecimiento' => 'required|string|max:6',
+            'codigo_establecimiento' => 'required|string|max:6|unique:escuela,codigo_establecimiento',
             'zona' => 'required|string|max:2',
         ]);
 
         Escuela::create($request->all());
 
-        return redirect()->route('escuelas.index')->with('success', 'Escuela creada con éxito.');
+        return redirect()->route('escuelas.index', ['busqueda' => $request->busqueda ?? null])
+                         ->with('success', 'Escuela creada con éxito.');
     }
 
-    public function show($id)
-{
-    $escuela = Escuela::find($id); // Obtener la escuela por ID
-
-    if (!$escuela) {
-        return redirect()->route('escuelas.index')->with('error', 'Escuela no encontrada');
+    public function show(Escuela $escuela)
+    {
+        return view('escuelas.show', compact('escuela'))->with('busqueda', request('busqueda'));
     }
-
-    return view('escuelas.show', compact('escuela'));
-}
 
     public function edit(Escuela $escuela)
     {
-        return view('escuelas.edit', compact('escuela'));
+        return view('escuelas.edit', compact('escuela'))->with('busqueda', request('busqueda'));
     }
 
     public function update(Request $request, Escuela $escuela)
     {
-        $request->validate([
-            'nombre_escuela' => 'required|string|max:60',
-            'direccion' => 'required|string|max:60',
-            'codigo_establecimiento' => 'required|string|max:6',
-            'zona' => 'required|string|max:2',
-        ]);
+    $request->validate([
+               'nombre_escuela' => 'required|string|max:60',
+              'direccion' => 'required|string|max:60',
+              'codigo_establecimiento' => 'required|string|max:6|unique:escuela,codigo_establecimiento,' . $escuela->id_escuela . ',id_escuela',
+             'zona' => 'required|string|max:2',
+      ]);
 
-        $escuela->update($request->all());
+     $escuela->update($request->all());
 
-        return redirect()->route('escuelas.index')->with('success', 'Escuela actualizada correctamente.');
+     return redirect()->route('escuelas.index', ['busqueda' => $request->busqueda ?? null])
+                     ->with('success', 'Escuela actualizada correctamente.');
     }
 
-    public function destroy(Escuela $escuela)
+    public function destroy(Request $request, Escuela $escuela)
     {
         $escuela->delete();
-        return redirect()->route('escuelas.index')->with('success', 'Escuela eliminada.');
+
+        return redirect()->route('escuelas.index', ['busqueda' => $request->busqueda ?? null])
+                         ->with('success', 'Escuela eliminada.');
     }
 }

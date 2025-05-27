@@ -8,10 +8,24 @@ use Illuminate\Http\Request;
 
 class TutelarController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tutelares = Tutelar::with('alumno')->get();
-        return view('tutelares.index', compact('tutelares'));
+        $busqueda = $request->input('busqueda');
+
+        // Cargar los tutelares con su alumno, y hacer búsqueda opcional
+        $tutelares = Tutelar::with('alumno')
+            ->when($busqueda, function ($query, $busqueda) {
+                $query->where(function ($q) use ($busqueda) {
+                    $q->where('nombre_tutor', 'like', "%$busqueda%")
+                      ->orWhereHas('alumno', function ($q2) use ($busqueda) {
+                          $q2->where('nombre_alumno', 'like', "%$busqueda%");
+                      });
+                });
+            })
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('tutelares.index', compact('tutelares', 'busqueda'));
     }
 
     public function create()
@@ -27,6 +41,11 @@ class TutelarController extends Controller
             'cui_tutor' => 'required|string|max:15',
             'nombre_tutor' => 'required|string|max:60',
             'telefono' => 'nullable|string|max:15',
+        ], [
+            'cui_alumno.required' => 'El CUI del alumno es obligatorio.',
+            'cui_alumno.exists' => 'El alumno no existe.',
+            'cui_tutor.required' => 'El CUI del tutor es obligatorio.',
+            'nombre_tutor.required' => 'El nombre del tutor es obligatorio.',
         ]);
 
         $exists = Tutelar::where('cui_alumno', $request->cui_alumno)
@@ -70,6 +89,8 @@ class TutelarController extends Controller
         $request->validate([
             'nombre_tutor' => 'required|string|max:60',
             'telefono' => 'nullable|string|max:15',
+        ], [
+            'nombre_tutor.required' => 'El nombre del tutor es obligatorio.',
         ]);
 
         $tutelar = Tutelar::where('cui_alumno', $cui_alumno)

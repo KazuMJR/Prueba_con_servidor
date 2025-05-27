@@ -7,55 +7,86 @@ use Illuminate\Http\Request;
 
 class CatedraticoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $catedraticos = Catedratico::all();
-        return view('catedraticos.index', compact('catedraticos'));
+        $busqueda = $request->input('busqueda');
+
+        $catedraticos = Catedratico::when($busqueda, function ($query, $busqueda) {
+            return $query->where(function ($q) use ($busqueda) {
+                $q->where('cui', 'like', "%$busqueda%")
+                  ->orWhere('nombre_catedratico', 'like', "%$busqueda%");
+            });
+        })->paginate(10)->withQueryString();
+
+        if ($request->ajax()) {
+            return view('catedraticos.partials.table', compact('catedraticos', 'busqueda'));
+        }
+
+        return view('catedraticos.index', compact('catedraticos', 'busqueda'));
     }
 
     public function create()
     {
-        return view('catedraticos.form');
+        return view('catedraticos.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'cui' => 'required|unique:catedratico',
-            'nombre_catedratico' => 'required',
-            'edad' => 'required|integer',
-            'sexo' => 'required|in:M,F'
+            'cui' => 'required|string|max:15|unique:catedratico,cui',
+            'nombre_catedratico' => 'required|string|max:60',
+            'edad' => 'required|integer|min:1',
+            'sexo' => 'required|string|in:M,F',
+        ], [
+            'cui.unique' => 'El CUI ya está registrado.',
+            'cui.required' => 'El CUI es obligatorio.',
+            'nombre_catedratico.required' => 'El nombre del catedrático es obligatorio.',
+            'edad.required' => 'La edad es obligatoria.',
+            'sexo.required' => 'El sexo es obligatorio.',
         ]);
 
         Catedratico::create($request->all());
-        return redirect()->route('catedraticos.index');
+
+        return redirect()->route('catedraticos.index', ['busqueda' => $request->busqueda ?? null])
+                         ->with('success', 'Catedrático creado con éxito.');
     }
 
     public function show(Catedratico $catedratico)
     {
-        return view('catedraticos.show', compact('catedratico'));
+        return view('catedraticos.show', compact('catedratico'))->with('busqueda', request('busqueda'));
     }
 
     public function edit(Catedratico $catedratico)
     {
-        return view('catedraticos.form', compact('catedratico'));
+        return view('catedraticos.edit', compact('catedratico'))->with('busqueda', request('busqueda'));
     }
 
     public function update(Request $request, Catedratico $catedratico)
     {
         $request->validate([
-            'nombre_catedratico' => 'required',
-            'edad' => 'required|integer',
-            'sexo' => 'required|in:M,F'
+            'cui' => 'required|string|max:15|unique:catedratico,cui,' . $catedratico->cui . ',cui',
+            'nombre_catedratico' => 'required|string|max:60',
+            'edad' => 'required|integer|min:1',
+            'sexo' => 'required|string|in:M,F',
+        ], [
+            'cui.unique' => 'El CUI ya está registrado.',
+            'cui.required' => 'El CUI es obligatorio.',
+            'nombre_catedratico.required' => 'El nombre del catedrático es obligatorio.',
+            'edad.required' => 'La edad es obligatoria.',
+            'sexo.required' => 'El sexo es obligatorio.',
         ]);
 
         $catedratico->update($request->all());
-        return redirect()->route('catedraticos.index');
+
+        return redirect()->route('catedraticos.index', ['busqueda' => $request->busqueda ?? null])
+                         ->with('success', 'Catedrático actualizado con éxito.');
     }
 
-    public function destroy(Catedratico $catedratico)
+    public function destroy(Request $request, Catedratico $catedratico)
     {
         $catedratico->delete();
-        return redirect()->route('catedraticos.index');
+
+        return redirect()->route('catedraticos.index', ['busqueda' => $request->busqueda ?? null])
+                         ->with('success', 'Catedrático eliminado correctamente.');
     }
 }

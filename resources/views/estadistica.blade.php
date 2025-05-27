@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de Reportes Ejecutivos</title>
+    <title>Estadisticas de Reportes Ejecutivos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
      <!-- Bootstrap Icons -->
@@ -77,7 +77,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('principal') }}"><i class="bi bi-speedometer2"></i> Principal</a>
+                    <a class="nav-link" href="{{ route('principal') }}"><i class="bi bi-house-fill"></i> Principal</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('alumnos.index') }}"><i class="bi bi-people-fill"></i> Alumnos</a>
@@ -125,7 +125,7 @@
 </nav>
 
     <div class="container py-5">
-        <h2 class="mb-1">Dashboard de Reportes Ejecutivos</h2>
+        <h2 class="mb-1">Estadisticas de Reportes Ejecutivos</h2>
         <p class="text-muted mb-4">Visión general del sistema educativo nacional.</p>
 
         <div class="row g-3 mb-4">
@@ -252,6 +252,32 @@
             }
         });
     </script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.body.classList.add("fade-transition");
+        document.body.style.opacity = 1;
+
+        const links = document.querySelectorAll("a[href]");
+        links.forEach(link => {
+            link.addEventListener("click", function (e) {
+                const href = this.getAttribute("href");
+                if (!href.startsWith('#') && this.target !== "_blank") {
+                    e.preventDefault();
+                    document.body.style.opacity = 0;
+                    setTimeout(() => {
+                        window.location.href = href;
+                    }, 300);
+                }
+            });
+        });
+    });
+</script>
+
+
 </body>
 
 </html>

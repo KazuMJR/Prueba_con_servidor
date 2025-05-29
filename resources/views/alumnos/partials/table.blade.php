@@ -1,42 +1,38 @@
-@if($alumnos->isEmpty())
-    <div class="alert alert-info">No hay alumnos registrados aún.</div>
+@if($inscripciones->isEmpty())
+    <div class="alert alert-info">No hay inscripciones registradas aún.</div>
 @else
     <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
+        <table class="table align-middle table-hover border">
             <thead class="table-light">
                 <tr>
-                    <th>CUI</th>
-                    <th>Nombre</th>
-                    <th>Edad</th>
-                    <th>Sexo</th>
-                    <th class="text-center" style="width: 180px;">Acciones</th>
+                    <th>Código</th>
+                    <th>Fecha</th>
+                    <th>Alumno</th>
+                    <th class="text-center">Acciones</th>
                 </tr>
             </thead>
-            <tbody id="alumnosTableBody">
-                @foreach($alumnos as $alumno)
+            <tbody id="inscripcionesTableBody">
+                @foreach($inscripciones as $inscripcion)
                     <tr>
-                        <td><strong>{{ $alumno->cui }}</strong></td>
-                        <td>{{ $alumno->nombre_alumno }}</td>
-                        <td>{{ $alumno->edad }}</td>
-                        <td>{{ $alumno->sexo }}</td>
+                        <td><strong>{{ $inscripcion->codigo }}</strong></td>
+                        <td>{{ \Carbon\Carbon::parse($inscripcion->fecha)->format('d/m/Y') }}</td>
+                        <td>{{ $inscripcion->alumno->nombre_alumno ?? 'No asignado' }}</td>
                         <td class="text-center">
-                            <a href="{{ route('alumnos.show', ['alumno' => $alumno->cui, 'busqueda' => $busqueda]) }}"
-                               class="btn btn-sm btn-outline-info me-1">
+                            <a href="{{ route('inscripciones.show', ['inscripcione' => $inscripcion->codigo, 'busqueda' => request('busqueda')]) }}"
+                               class="btn btn-outline-info btn-sm me-1" title="Ver">
                                 <i class="bi bi-eye"></i>
                             </a>
-
-                            <a href="{{ route('alumnos.edit', ['alumno' => $alumno->cui, 'busqueda' => $busqueda]) }}"
-                               class="btn btn-sm btn-outline-warning me-1">
+                            <a href="{{ route('inscripciones.edit', ['inscripcione' => $inscripcion->codigo, 'busqueda' => request('busqueda')]) }}"
+                               class="btn btn-outline-warning btn-sm me-1" title="Editar">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-
-                            <form action="{{ route('alumnos.destroy', ['alumno' => $alumno->cui, 'busqueda' => $busqueda]) }}"
+                            <form action="{{ route('inscripciones.destroy', ['inscripcione' => $inscripcion->codigo, 'busqueda' => request('busqueda')]) }}"
                                   method="POST"
                                   class="d-inline"
-                                  onsubmit="return confirm('¿Eliminar este alumno?')">
+                                  onsubmit="return confirm('¿Estás seguro de eliminar esta inscripción?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>
@@ -49,6 +45,6 @@
 
     <!-- Paginación -->
     <nav id="paginacionContenedor">
-        {{ $alumnos->links('pagination::bootstrap-5') }}
+        {{ $inscripciones->links('pagination::bootstrap-5') }}
     </nav>
 @endif

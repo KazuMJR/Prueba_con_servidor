@@ -7,11 +7,24 @@ use Illuminate\Http\Request;
 
 class CalendarioExamenController extends Controller
 {
-public function index()
+public function index(Request $request)
 {
-$examenes = CalendarioExamenes::all();
-return view('calendarios.index', compact('examenes'));
+    $busqueda = $request->input('busqueda');
+
+    $examenes = CalendarioExamenes::when($busqueda, function ($query, $busqueda) {
+        return $query->where(function ($q) use ($busqueda) {
+            $q->where('id_examen', 'like', "%$busqueda%")
+              ->orWhere('descripcion', 'like', "%$busqueda%");
+        });
+    })->paginate(10)->withQueryString();
+
+    if ($request->ajax()) {
+        return view('calendarios.partials.table', compact('examenes', 'busqueda'))->render();
+    }
+
+    return view('calendarios.index', compact('examenes', 'busqueda'));
 }
+
 
 public function create()
 {

@@ -4,43 +4,48 @@
     <meta charset="UTF-8" />
     <title>Detalle del Horario</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Bootstrap CSS -->
+
+    <!-- Bootstrap CSS + Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        body {
-            padding-top: 2rem;
-            background-color: #f8f9fa;
-        }
-        .card {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 1.5rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
-            background-color: #fff;
-            border-radius: 0.5rem;
-        }
-        .actions {
-            max-width: 600px;
-            margin: 1rem auto 0 auto;
-            text-align: center;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
 </head>
 <body>
 
-<div class="container">
-    <h1 class="mb-4 text-center">Detalle del Horario</h1>
+<div class="container py-4">
+    <h1 class="mb-4"><i class="bi bi-clock-history"></i> Detalle del Horario</h1>
 
-    <div class="card">
-        <p><strong>ID:</strong> {{ $horario->id_horario }}</p>
-        <p><strong>Hora Inicio:</strong> {{ \Carbon\Carbon::parse($horario->hora_inicio)->format('H:i') }}</p>
-        <p><strong>Hora Fin:</strong> {{ \Carbon\Carbon::parse($horario->hora_fin)->format('H:i') }}</p>
-        <p><strong>Día:</strong> {{ $horario->dia }}</p>
-        <p><strong>Aula:</strong> {{ $horario->aula }}</p>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title text-primary"><i class="bi bi-info-circle"></i> Información general</h5>
+
+            <p class="mb-2"><strong>ID:</strong> {{ $horario->id_horario }}</p>
+            <p class="mb-2"><strong>Hora Inicio:</strong> {{ \Carbon\Carbon::parse($horario->hora_inicio)->format('H:i') }}</p>
+            <p class="mb-2"><strong>Hora Fin:</strong> {{ \Carbon\Carbon::parse($horario->hora_fin)->format('H:i') }}</p>
+            <p class="mb-2"><strong>Día:</strong> {{ $horario->dia }}</p>
+            <p class="mb-0"><strong>Aula:</strong> {{ $horario->aula }}</p>
+        </div>
     </div>
 
-    <div class="actions">
-        <a href="{{ route('horario_clase.index') }}" class="btn btn-secondary mt-3">Volver al listado</a>
+    <div class="mt-4 d-flex justify-content-between flex-wrap gap-2">
+        <a href="{{ route('horario_clase.index') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Volver al listado
+        </a>
+
+        <div class="d-flex gap-2">
+            <a href="{{ route('horario_clase.edit', $horario) }}" class="btn btn-warning">
+                <i class="bi bi-pencil-square"></i> Editar
+            </a>
+
+            <form method="POST" action="{{ route('horario_clase.destroy', $horario) }}"
+                  onsubmit="return confirm('¿Estás seguro de que deseas eliminar este horario?');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash3"></i> Eliminar
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 

@@ -11,7 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        .navbar-brand img {
+         .navbar-brand img {
             height: 50px;
         }
 
@@ -43,7 +43,8 @@
 </head>
 <body>
 
-    <!-- Navbar -->
+   
+ <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container-fluid">
         <a class="navbar-brand" href="{{ route('principal') }}">
@@ -61,12 +62,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('estadistica') }}"><i class="bi bi-speedometer2"></i> Estadisticas</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('alumnos.index') }}"><i class="bi bi-people-fill"></i> Alumnos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('catedraticos.index') }}"><i class="bi bi-person-badge-fill"></i> Catedráticos</a>
-                </li>
+        
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('escuelas.index') }}"><i class="bi bi-building"></i> Escuelas</a>
                 </li>
@@ -78,12 +74,6 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('secciones.index') }}"><i class="bi bi-diagram-3-fill"></i> Secciones</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('inscripciones.index') }}"><i class="bi bi-card-checklist"></i> Inscripciones</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('tutelares.index') }}"><i class="bi bi-person-hearts"></i> Tutelares</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('asignaciones.index') }}"><i class="bi bi-person-lines-fill"></i> Asignaciones</a>
@@ -106,7 +96,6 @@
     </div>
 </nav>
 
-
 <!-- Contenido -->
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -121,7 +110,7 @@
 
     <!-- Barra de búsqueda -->
     <div class="card p-3 mb-3">
-        <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
+        <form method="GET" action="{{ route('catedraticos.index') }}" class="d-flex gap-2 flex-wrap" id="formBusqueda">
             <input
                 type="text"
                 id="busqueda"
@@ -129,11 +118,15 @@
                 class="form-control"
                 placeholder="Buscar por CUI o Nombre..."
                 autocomplete="off"
+                value="{{ request('busqueda') }}"
             >
-            <button class="btn btn-outline-secondary">
+            <button type="submit" class="btn btn-outline-secondary">
                 <i class="bi bi-funnel"></i> Filtrar
             </button>
-        </div>
+            <button type="button" class="btn btn-outline-danger" id="btnCancelar">
+                <i class="bi bi-x-circle"></i> Cancelar
+            </button>
+        </form>
     </div>
 
     <!-- Mensajes -->
@@ -190,6 +183,7 @@
                 </tbody>
             </table>
         </div>
+
         <!-- Paginación -->
         <div class="d-flex justify-content-center mt-3">
             {{ $catedraticos->links('pagination::bootstrap-5') }}
@@ -199,7 +193,8 @@
 
 <!-- Scripts -->
 <script>
-    document.getElementById('busqueda').addEventListener('keyup', function () {
+    // Filtro en tiempo real (solo filtra lo que ya está cargado)
+    document.getElementById('busqueda').addEventListener('input', function () {
         var filtro = this.value.toLowerCase();
         var filas = document.querySelectorAll('#tablaCatedraticos tr');
         filas.forEach(function (fila) {
@@ -208,11 +203,13 @@
         });
     });
 
+    // Ocultar mensajes automáticamente después de 3 segundos
     setTimeout(function () {
         document.getElementById('successMessage')?.classList.add('d-none');
         document.getElementById('errorMessage')?.classList.add('d-none');
     }, 3000);
 
+    // Animación simple para navegación suave (fade out / fade in)
     document.addEventListener("DOMContentLoaded", () => {
         document.body.classList.add("fade-transition");
         document.body.style.opacity = 1;
@@ -230,6 +227,15 @@
                 }
             });
         });
+    });
+</script>
+
+<script>
+    document.getElementById('btnCancelar').addEventListener('click', function() {
+        // Limpia el input
+        document.getElementById('busqueda').value = '';
+        // Envía el formulario sin parámetros para recargar la página sin filtros
+        document.getElementById('formBusqueda').submit();
     });
 </script>
 

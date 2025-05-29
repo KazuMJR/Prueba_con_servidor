@@ -9,11 +9,29 @@ use Illuminate\Http\Request;
 class InscripcionController extends Controller
 {
     // Mostrar listado de inscripciones
-    public function index()
-    {
-        $inscripciones = Inscripcion::with('alumno')->get();
-        return view('inscripciones.index', compact('inscripciones'));
+    public function index(Request $request)
+{
+    $busqueda = $request->input('busqueda');
+
+    $inscripciones = Inscripcion::with('alumno') // Cargar relación con alumno
+        ->when($busqueda, function ($query, $busqueda) {
+            return $query->where(function ($q) use ($busqueda) {
+                $q->where('codigo', 'like', "%$busqueda%")
+                  ->orWhereHas('alumno', function ($alumnoQuery) use ($busqueda) {
+                      $alumnoQuery->where('nombre_alumno', 'like', "%$busqueda%");
+                  });
+            });
+        })
+        ->paginate(10)
+        ->withQueryString();
+
+    if ($request->ajax()) {
+        return view('inscripciones.partials.table', compact('inscripciones', 'busqueda'))->render();
     }
+
+    return view('inscripciones.index', compact('inscripciones', 'busqueda'));
+}
+
 
     // Mostrar formulario para crear nueva inscripción
     public function create()
@@ -30,7 +48,7 @@ class InscripcionController extends Controller
             'fecha' => 'required|date',
             'cui_alumno' => 'required|string|unique:inscripcion,cui_alumno',
         ], [
-            'cui_alumno.unique' => 'El CUI del alumno ya está registrado.',
+        'cui_alumno.unique' => 'Este alumno ya esta inscrito!',
             'codigo.unique' => 'El código ya está registrado.',
             'fecha.required' => 'La fecha es obligatoria.',
         ]);
@@ -80,4 +98,5 @@ class InscripcionController extends Controller
         return redirect()->route('inscripciones.index')
             ->with('success', 'Inscripción eliminada correctamente.');
     }
+    
 }

@@ -12,15 +12,9 @@ class CatedraticoController extends Controller
         $busqueda = $request->input('busqueda');
 
         $catedraticos = Catedratico::when($busqueda, function ($query, $busqueda) {
-            return $query->where(function ($q) use ($busqueda) {
-                $q->where('cui', 'like', "%$busqueda%")
-                  ->orWhere('nombre_catedratico', 'like', "%$busqueda%");
-            });
+            $query->where('cui', 'like', "%{$busqueda}%")
+                  ->orWhere('nombre_catedratico', 'like', "%{$busqueda}%");
         })->paginate(10)->withQueryString();
-
-        if ($request->ajax()) {
-            return view('catedraticos.partials.table', compact('catedraticos', 'busqueda'));
-        }
 
         return view('catedraticos.index', compact('catedraticos', 'busqueda'));
     }

@@ -28,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // En producción forzar https
         if (config('app.env') === 'production') {
-            URL::forceScheme('https');
+            URL::forceScheme('http');
         }
 
         // Para evitar errores de longitud en migraciones

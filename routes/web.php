@@ -26,10 +26,22 @@ Route::get('/dashboard', function () {
 // Ruta para vista estadística general (estadistica.blade.php)
 Route::get('/estadistica', [EstadisticaController::class, 'index'])->name('estadistica');
 
+
 // Ruta principal
 Route::get('/', function () {
     return view('principal');
 })->name('principal');
+
+// Vista para Gestión de Alumnos
+Route::get('/gestion', function () {
+    return view('gestion');
+})->name('gestion');
+
+// Vista para Administración Académica
+Route::get('/administrar', function () {
+    return view('administrar');
+})->name('administrar');
+
 
 
 // Recursos con resource simple
@@ -58,6 +70,7 @@ Route::resource('asignaciones', AsignacionController::class)->parameters([
 Route::resource('inscripciones', InscripcionController::class)->parameters([
     'inscripciones' => 'inscripcion',
 ]);
+
 
 Route::resource('secciones', SeccionController::class)->parameters([
     'secciones' => 'seccion',

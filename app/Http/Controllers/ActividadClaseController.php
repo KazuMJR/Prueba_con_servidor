@@ -7,11 +7,19 @@ use Illuminate\Http\Request;
 
 class ActividadClaseController extends Controller
 {
-    public function index()
-    {
-        $actividades = ActividadClase::all();
-        return view('actividades.index', compact('actividades'));
-    }
+  public function index(Request $request)
+{
+    $busqueda = $request->input('busqueda');
+
+    $actividades = ActividadClase::when($busqueda, function ($query, $busqueda) {
+        return $query->where('id_actividad', 'like', "%$busqueda%")
+                     ->orWhere('descripcion', 'like', "%$busqueda%");
+    })
+    ->paginate(10)
+    ->withQueryString();
+
+    return view('actividades.index', compact('actividades', 'busqueda'));
+}
 
     public function create()
     {

@@ -57,11 +57,12 @@
 </head>
 <body>
 
+
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container-fluid">
         <a class="navbar-brand" href="{{ route('principal') }}">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Logotipo-MINEDUC-2024-2028_AZUL_H.png/330px-Logotipo-MINEDUC-2024-2028_AZUL_H.png" alt="Logo MINEDUC">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Logotipo-MINEDUC-2024-2028_AZUL_H.png/330px-Logotipo-MINEDUC-2024-2028_AZUL_H.png" alt="Logo MINEDUC" />
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -71,19 +72,10 @@
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="{{ route('principal') }}"><i class="bi bi-house-fill"></i> Principal</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('estadistica') }}"><i class="bi bi-speedometer2"></i> Estadísticas</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('alumnos.index') }}"><i class="bi bi-people-fill"></i> Alumnos</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('catedraticos.index') }}"><i class="bi bi-person-badge-fill"></i> Catedráticos</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('escuelas.index') }}"><i class="bi bi-building"></i> Escuelas</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('cursos.index') }}"><i class="bi bi-journal-bookmark-fill"></i> Cursos</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('grados.index') }}"><i class="bi bi-layers-fill"></i> Grados</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('secciones.index') }}"><i class="bi bi-diagram-3-fill"></i> Secciones</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('alumnos.index') }}"><i class="bi bi-people-fill"></i> Alumnos</a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('inscripciones.index') }}"><i class="bi bi-card-checklist"></i> Inscripciones</a></li>
-                <li class="nav-item"><a class="nav-link active" href="{{ route('tutelares.index') }}"><i class="bi bi-person-hearts"></i> Tutelares</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('asignaciones.index') }}"><i class="bi bi-person-lines-fill"></i> Asignaciones</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('horario_clase.index') }}"><i class="bi bi-calendar-week"></i> Horarios</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('calendarios.index') }}"><i class="bi bi-calendar2-event-fill"></i> Calendarios</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('programas.index') }}"><i class="bi bi-easel-fill"></i> Programas</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('actividades.index') }}"><i class="bi bi-lightning-fill"></i> Actividades</a></li>
             </ul>
         </div>
     </div>
@@ -101,82 +93,88 @@
         </a>
     </div>
 
-    <!-- Búsqueda -->
+
+<!-- Búsqueda -->
+<form method="GET" action="{{ route('tutelares.index') }}">
     <div class="card p-3 mb-3">
-        <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
+        <div class="d-flex justify-content-start align-items-center gap-2 flex-wrap">
             <input
                 type="text"
                 id="busqueda"
                 name="busqueda"
                 class="form-control"
+                value="{{ request('busqueda') }}"
                 placeholder="Buscar por CUI, nombre tutor o alumno..."
                 autocomplete="off"
             >
-            <button class="btn btn-outline-secondary">
+            <button type="submit" class="btn btn-outline-secondary">
                 <i class="bi bi-funnel"></i> Filtrar
             </button>
+            <a href="{{ route('tutelares.index') }}" class="btn btn-outline-danger">
+                <i class="bi bi-x-circle"></i> Cancelar
+            </a>
         </div>
     </div>
+</form>
 
-    <!-- Mensajes -->
-    @if(session('success'))
-        <div id="successMessage" class="alert alert-success fade-out">{{ session('success') }}</div>
-    @endif
+<!-- Mensajes -->
+@if(session('success'))
+    <div id="successMessage" class="alert alert-success fade-out">{{ session('success') }}</div>
+@endif
 
-    <!-- Tabla -->
-    <div class="table-responsive">
-        <table class="table align-middle table-hover border">
-            <thead class="table-light">
+<!-- Tabla -->
+<div class="table-responsive">
+    <table class="table align-middle table-hover border">
+        <thead class="table-light">
+            <tr>
+                <th>CUI Tutor</th>
+                <th>Nombre Tutor</th>
+                <th>Teléfono</th>
+                <th>CUI Alumno</th>
+                <th>Alumno</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tutelaresTableBody">
+            @forelse($tutelares as $tutelar)
                 <tr>
-                    <th>CUI Tutor</th>
-                    <th>Nombre Tutor</th>
-                    <th>Teléfono</th>
-                    <th>CUI Alumno</th>
-                    <th>Alumno</th>
-                    <th class="text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="tutelaresTableBody">
-                @forelse($tutelares as $tutelar)
-                    <tr>
                     <td><strong>{{ $tutelar->cui_tutor }}</strong></td>
-                        <td>{{ $tutelar->nombre_tutor }}</td>
-                        <td>{{ $tutelar->telefono }}</td>
-                        <td><strong>{{ $tutelar->cui_alumno }}</strong></td>
-                        <td>{{ $tutelar->alumno->nombre_alumno ?? 'N/A' }}</td>
-                        <td class="text-center">
-                            <a href="{{ route('tutelares.show', [$tutelar->cui_alumno, $tutelar->cui_tutor]) }}" class="btn btn-outline-info btn-sm me-1" title="Ver">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            <a href="{{ route('tutelares.edit', [$tutelar->cui_alumno, $tutelar->cui_tutor]) }}" class="btn btn-outline-warning btn-sm me-1" title="Editar">
-                                <i class="bi bi-pencil-square"></i>
-                            </a>
-                            <form action="{{ route('tutelares.destroy', [$tutelar->cui_alumno, $tutelar->cui_tutor]) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Eliminar este tutor?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                @empty
-                    <tr><td colspan="6" class="text-center">No hay tutelares registrados.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+                    <td>{{ $tutelar->nombre_tutor }}</td>
+                    <td>{{ $tutelar->telefono }}</td>
+                    <td><strong>{{ $tutelar->cui_alumno }}</strong></td>
+                    <td>{{ $tutelar->alumno->nombre_alumno ?? 'N/A' }}</td>
+                    <td class="text-center">
+                        <a href="{{ route('tutelares.show', [$tutelar->cui_alumno, $tutelar->cui_tutor]) }}" class="btn btn-outline-info btn-sm me-1" title="Ver">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <a href="{{ route('tutelares.edit', [$tutelar->cui_alumno, $tutelar->cui_tutor]) }}" class="btn btn-outline-warning btn-sm me-1" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <form action="{{ route('tutelares.destroy', [$tutelar->cui_alumno, $tutelar->cui_tutor]) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Eliminar este tutor?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            @empty
+                <tr><td colspan="6" class="text-center">No hay tutelares registrados.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
 
-    <!-- Paginación -->
-    <div class="d-flex justify-content-center mt-3">
-        {{ $tutelares->links('pagination::bootstrap-5') }}
-    </div>
+<!-- Paginación -->
+<div class="d-flex justify-content-center mt-3">
+    {{ $tutelares->links('pagination::bootstrap-5') }}
 </div>
 
 <!-- Scripts -->
 <script>
-    // Filtro
-    document.getElementById('busqueda').addEventListener('keyup', function () {
+    // Filtro en tiempo real (solo visible, no afecta backend)
+    document.getElementById('busqueda').addEventListener('input', function () {
         var filtro = this.value.toLowerCase();
         var filas = document.querySelectorAll('#tutelaresTableBody tr');
 
@@ -186,33 +184,11 @@
         });
     });
 
-    // Ocultar mensajes
+    // Ocultar mensaje
     setTimeout(function () {
         document.getElementById('successMessage')?.classList.add('d-none');
     }, 3000);
-
-    // Transición de salida
-    document.addEventListener("DOMContentLoaded", () => {
-        document.body.classList.add("fade-transition");
-        document.body.style.opacity = 1;
-
-        const links = document.querySelectorAll("a[href]");
-        links.forEach(link => {
-            link.addEventListener("click", function (e) {
-                const href = this.getAttribute("href");
-                if (!href.startsWith('#') && this.target !== "_blank") {
-                    e.preventDefault();
-                    document.body.style.opacity = 0;
-                    setTimeout(() => {
-                        window.location.href = href;
-                    }, 300);
-                }
-            });
-        });
-    });
 </script>
 
-<!-- Bootstrap Bundle -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

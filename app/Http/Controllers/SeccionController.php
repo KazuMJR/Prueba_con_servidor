@@ -7,11 +7,16 @@ use Illuminate\Http\Request;
 
 class SeccionController extends Controller
 {
-    public function index()
-    {
-        $secciones = Seccion::all();
-        return view('secciones.index', compact('secciones'));
-    }
+    public function index(Request $request)
+{
+    $busqueda = $request->input('busqueda');
+
+    $secciones = Seccion::when($busqueda, function ($query, $busqueda) {
+        return $query->where('letra', 'like', "%$busqueda%");
+    })->paginate(10)->withQueryString();
+
+    return view('secciones.index', compact('secciones', 'busqueda'));
+}
 
     public function create()
     {

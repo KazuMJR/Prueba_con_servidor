@@ -14,10 +14,42 @@ use Illuminate\Http\Request;
 class AsignacionController extends Controller
 {
     // Mostrar listado de asignaciones
-    public function index()
+    public function index(Request $request)
     {
-        $asignaciones = Asignacion::with(['inscripcion', 'escuela', 'seccion', 'grado', 'catedratico', 'curso'])->get();
-        return view('asignaciones.index', compact('asignaciones'));
+        $busqueda = $request->input('busqueda');
+
+        $asignaciones = Asignacion::with(['inscripcion', 'escuela', 'seccion', 'grado', 'catedratico', 'curso'])
+            ->when($busqueda, function ($query, $busqueda) {
+                return $query->where(function ($q) use ($busqueda) {
+                    $q->where('id_asignacion', 'like', "%$busqueda%")
+                      ->orWhereHas('inscripcion', function ($inscripcionQuery) use ($busqueda) {
+                          $inscripcionQuery->where('codigo', 'like', "%$busqueda%");
+                      })
+                      ->orWhereHas('escuela', function ($escuelaQuery) use ($busqueda) {
+                          $escuelaQuery->where('nombre_escuela', 'like', "%$busqueda%");
+                      })
+                      ->orWhereHas('seccion', function ($seccionQuery) use ($busqueda) {
+                          $seccionQuery->where('letra', 'like', "%$busqueda%");
+                      })
+                      ->orWhereHas('grado', function ($gradoQuery) use ($busqueda) {
+                          $gradoQuery->where('nombre_grado', 'like', "%$busqueda%");
+                      })
+                      ->orWhereHas('catedratico', function ($catedraticoQuery) use ($busqueda) {
+                          $catedraticoQuery->where('nombre_catedratico', 'like', "%$busqueda%");
+                      })
+                      ->orWhereHas('curso', function ($cursoQuery) use ($busqueda) {
+                          $cursoQuery->where('nombre_curso', 'like', "%$busqueda%");
+                      });
+                });
+            })
+            ->paginate(10)
+            ->withQueryString();
+
+        if ($request->ajax()) {
+            return view('asignaciones.partials.table', compact('asignaciones', 'busqueda'))->render();
+        }
+
+        return view('asignaciones.index', compact('asignaciones', 'busqueda'));
     }
 
     // Mostrar formulario para crear una nueva asignación

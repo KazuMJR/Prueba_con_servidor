@@ -9,11 +9,24 @@ use Illuminate\Http\Request;
 
 class ProgramaCursoController extends Controller
 {
-    public function index()
-    {
-        $programas = ProgramaCurso::with(['grado', 'curso'])->get();
-        return view('programas.index', compact('programas'));
-    }
+  public function index(Request $request)
+{
+    $busqueda = $request->input('busqueda');
+
+    $programas = ProgramaCurso::with(['grado', 'curso'])
+    ->when($busqueda, function ($query, $busqueda) {
+        return $query->whereHas('grado', function ($q) use ($busqueda) {
+            $q->where('nombre_grado', 'like', "%$busqueda%");
+        })->orWhereHas('curso', function ($q) use ($busqueda) {
+            $q->where('nombre_curso', 'like', "%$busqueda%");
+        });
+    })
+    ->orderBy('id_programa', 'asc')
+    ->paginate(8);
+
+    return view('programas.index', compact('programas', 'busqueda'));
+}
+
 
     public function create()
     {

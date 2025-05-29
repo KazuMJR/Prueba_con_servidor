@@ -2,7 +2,13 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>@isset($tutelar) <i class="bi bi-pencil-square"></i> Editar Tutor @else <i class="bi bi-person-plus-fill"></i> Agregar Tutor @endisset</title>
+   <title>
+    @isset($tutelar)
+        Editar Tutor
+    @else
+        Agregar Tutor
+    @endisset
+</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
@@ -57,6 +63,13 @@
             @method('PUT')
         @endisset
 
+        @if(!isset($tutelar))
+        <div class="mb-3">
+            <label for="alumno_busqueda" class="form-label">Buscar Alumno (nombre o CUI)</label>
+            <input type="text" class="form-control" id="alumno_busqueda" placeholder="Escriba para filtrar...">
+        </div>
+        @endif
+
         <div class="mb-3">
             <label for="cui_alumno" class="form-label">Alumno <span class="text-danger">*</span></label>
             @isset($tutelar)
@@ -66,7 +79,10 @@
                 <select name="cui_alumno" id="cui_alumno" class="form-select" required>
                     <option value="">-- Seleccione un alumno --</option>
                     @foreach($alumnos as $alumno)
-                        <option value="{{ $alumno->cui }}" {{ old('cui_alumno') == $alumno->cui ? 'selected' : '' }}>
+                        <option value="{{ $alumno->cui }}"
+                                data-nombre="{{ strtolower($alumno->nombre_alumno) }}"
+                                data-cui="{{ strtolower($alumno->cui) }}"
+                                {{ old('cui_alumno') == $alumno->cui ? 'selected' : '' }}>
                             {{ $alumno->nombre_alumno }} ({{ $alumno->cui }})
                         </option>
                     @endforeach
@@ -115,5 +131,24 @@
         }, 3000);
     });
 </script>
+
+<!-- Filtro en tiempo real para el select de alumnos -->
+<script>
+    const alumnoBusqueda = document.getElementById('alumno_busqueda');
+    if (alumnoBusqueda) {
+        alumnoBusqueda.addEventListener('input', function () {
+            const filtro = this.value.toLowerCase();
+            const opciones = document.querySelectorAll('#cui_alumno option');
+
+            opciones.forEach((opcion, index) => {
+                if (index === 0) return; // mantener visible opción por defecto
+                const nombre = opcion.dataset.nombre;
+                const cui = opcion.dataset.cui;
+                opcion.hidden = !(nombre.includes(filtro) || cui.includes(filtro));
+            });
+        });
+    }
+</script>
+
 </body>
 </html>

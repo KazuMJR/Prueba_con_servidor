@@ -18,8 +18,9 @@ class AlumnoController extends Controller
             });
         })->paginate(10)->withQueryString();
 
+        // Soporte para solicitudes AJAX (filtrado en tiempo real desde el lado del cliente)
         if ($request->ajax()) {
-            return view('alumnos.partials.table', compact('alumnos', 'busqueda'));
+            return view('alumnos.partials.table', compact('alumnos', 'busqueda'))->render();
         }
 
         return view('alumnos.index', compact('alumnos', 'busqueda'));
@@ -64,18 +65,17 @@ class AlumnoController extends Controller
     public function update(Request $request, Alumno $alumno)
     {
         $request->validate([
-    'cui' => 'required|string|max:15|unique:alumno,cui,' . $alumno->cui . ',cui',
-    'nombre_alumno' => 'required|string|max:60',
-    'edad' => 'required|integer|min:1',
-    'sexo' => 'required|string|in:M,F',
-], [
-    'cui.unique' => 'El CUI ya está registrado.',
-    'cui.required' => 'El CUI es obligatorio.',
-    'nombre_alumno.required' => 'El nombre del alumno es obligatorio.',
-    'edad.required' => 'La edad es obligatoria.',
-    'sexo.required' => 'El sexo es obligatorio.',
-]);
-
+            'cui' => 'required|string|max:15|unique:alumno,cui,' . $alumno->cui . ',cui',
+            'nombre_alumno' => 'required|string|max:60',
+            'edad' => 'required|integer|min:1',
+            'sexo' => 'required|string|in:M,F',
+        ], [
+            'cui.unique' => 'El CUI ya está registrado.',
+            'cui.required' => 'El CUI es obligatorio.',
+            'nombre_alumno.required' => 'El nombre del alumno es obligatorio.',
+            'edad.required' => 'La edad es obligatoria.',
+            'sexo.required' => 'El sexo es obligatorio.',
+        ]);
 
         $alumno->update($request->all());
 
@@ -90,5 +90,4 @@ class AlumnoController extends Controller
         return redirect()->route('alumnos.index', ['busqueda' => $request->busqueda ?? null])
                          ->with('success', 'Alumno eliminado correctamente.');
     }
-
 }

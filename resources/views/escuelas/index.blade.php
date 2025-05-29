@@ -83,7 +83,7 @@
 </head>
 <body>
 
-   <!-- Navbar -->
+ <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container-fluid">
         <a class="navbar-brand" href="{{ route('principal') }}">
@@ -102,13 +102,7 @@
                     <a class="nav-link" href="{{ route('estadistica') }}"><i class="bi bi-speedometer2"></i> Estadisticas</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('alumnos.index') }}"><i class="bi bi-people-fill"></i> Alumnos</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="{{ route('catedraticos.index') }}"><i class="bi bi-person-badge-fill"></i> Catedráticos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('escuelas.index') }}"><i class="bi bi-building"></i> Escuelas</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('cursos.index') }}"><i class="bi bi-journal-bookmark-fill"></i> Cursos</a>
@@ -118,12 +112,6 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('secciones.index') }}"><i class="bi bi-diagram-3-fill"></i> Secciones</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('inscripciones.index') }}"><i class="bi bi-card-checklist"></i> Inscripciones</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('tutelares.index') }}"><i class="bi bi-person-hearts"></i> Tutelares</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('asignaciones.index') }}"><i class="bi bi-person-lines-fill"></i> Asignaciones</a>
@@ -161,25 +149,29 @@
 
     <!-- Barra de búsqueda -->
     <div class="card p-3 mb-3">
-        <form method="GET" action="{{ route('escuelas.index') }}" class="w-100">
-            <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
-                <input
-                    type="text"
-                    id="busqueda"
-                    name="busqueda"
-                    class="form-control"
-                    placeholder="Buscar por nombre, dirección, código o zona..."
-                    value="{{ request('busqueda') }}"
-                    autocomplete="off"
-                >
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary" type="submit">
-                        <i class="bi bi-funnel"></i> Filtrar
-                    </button>
+    <form method="GET" action="{{ route('escuelas.index') }}" class="w-100" id="formBusqueda">
+        <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
+            <input
+                type="text"
+                id="busqueda"
+                name="busqueda"
+                class="form-control"
+                placeholder="Buscar por nombre, dirección, código o zona..."
+                value="{{ request('busqueda') }}"
+                autocomplete="off"
+            >
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary" type="submit">
+                    <i class="bi bi-funnel"></i> Filtrar
+                </button>
+                <button type="button" class="btn btn-outline-danger" id="btnCancelar">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                    </div>
                 </div>
-            </div>
-        </form>
-    </div>
+            </form>
+        </div>
+
 
     <!-- Mensajes -->
     @if(session('success'))
@@ -273,6 +265,15 @@
                 }
             });
         });
+    });
+</script>
+
+<script>
+    document.getElementById('btnCancelar').addEventListener('click', function() {
+        // Limpia el input
+        document.getElementById('busqueda').value = '';
+        // Envía el formulario sin parámetros para recargar la página sin filtros
+        document.getElementById('formBusqueda').submit();
     });
 </script>
 
